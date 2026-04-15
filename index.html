@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Pentol Jaya — Sistem Laporan V6</title>
+  <title>Pentol Jaya — V8 Cloud</title>
+  
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22PentolJaya%22,%22short_name%22:%22Pentol%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#0c0c0c%22,%22theme_color%22:%22#0c0c0c%22}">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   
@@ -12,285 +15,151 @@
 
   <style>
     :root {
-      --bg:        #0c0c0c;
-      --surface:   #161616;
-      --surface2:  #1e1e1e;
-      --border:    #2a2a2a;
-      --border2:   #333;
-      --text:      #f0f0f0;
-      --text-sub:  #999;
-      --text-dim:  #555;
-      --accent:    #f0f0f0;
-      --green:     #22c55e;
-      --red:       #ef4444;
-      --topbar-h:  58px;
-      --tabbar-h:  62px;
-      --r:         12px;
-      --font:      'DM Sans', -apple-system, sans-serif;
-      --mono:      'DM Mono', 'Courier New', monospace;
+      --bg: #0c0c0c; --surface: #161616; --surface2: #1e1e1e;
+      --border: #2a2a2a; --text: #f0f0f0; --text-sub: #999;
+      --green: #22c55e; --red: #ef4444; --accent: #f0f0f0;
+      --tabbar-h: 65px; --font: 'DM Sans', sans-serif;
+    }
+    [data-theme="light"] {
+      --bg: #f2f2f2; --surface: #ffffff; --surface2: #f7f7f7;
+      --border: #e0e0e0; --text: #111; --text-sub: #666;
     }
 
-    *,*::before,*::after { 
-      box-sizing: border-box; margin: 0; padding: 0; 
-      -webkit-tap-highlight-color: transparent; 
-      outline: none;
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); overflow-x: hidden; transition: background 0.3s; }
+    
+    /* DYNAMIC NOTIF STYLE */
+    .notif-popup {
+      position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 90%; max-width: 400px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000;
+      transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--font);
-      font-size: 14px;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
+    .notif-popup.show { top: 20px; }
+    .notif-icon { width: 40px; height: 40px; background: var(--bg); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-    #loadingOverlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.88);
-      z-index: 9999; display: none; flex-direction: column;
-      align-items: center; justify-content: center; gap: 14px;
-    }
-    .spinner {
-      width: 32px; height: 32px;
-      border: 2.5px solid var(--border2);
-      border-top-color: var(--text);
-      border-radius: 50%; animation: spin .7s linear infinite;
-    }
+    /* UI COMPONENTS */
+    #loadingOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; align-items: center; justify-content: center; }
+    .spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--text); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    #toast {
-      position: fixed; bottom: calc(var(--tabbar-h) + 12px);
-      left: 50%; transform: translateX(-50%) translateY(8px);
-      background: var(--text); color: var(--bg);
-      padding: 9px 18px; border-radius: 24px;
-      font-size: 13px; font-weight: 600;
-      opacity: 0; transition: opacity .25s, transform .25s;
-      z-index: 9998; pointer-events: none; white-space: nowrap;
-    }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    #loginScreen {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      min-height: 100vh; padding: 24px;
-    }
-    .login-card {
-      width: 100%; max-width: 360px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px; padding: 36px 28px;
-    }
-    .login-brand { text-align: center; margin-bottom: 32px; }
-    .login-brand .logo-icon { font-size: 28px; margin-bottom: 12px; display: block; }
-    .login-brand .logo-name { font-size: 20px; font-weight: 800; letter-spacing: .5px; color: var(--text); }
-    .login-brand .logo-sub { font-size: 12px; color: var(--text-sub); margin-top: 4px; letter-spacing: .3px; }
-    .f-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 7px; }
-    .f-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; border-radius: 10px; font-family: var(--font); font-size: 15px; outline: none; transition: border-color .2s; margin-bottom: 16px; }
-    .f-input:focus { border-color: var(--text-sub); }
-    .login-btn { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 14px; border-radius: 10px; font-family: var(--font); font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px; letter-spacing: .3px; transition: opacity .2s; }
-    .login-btn:active { opacity: .8; }
-    .login-err { text-align: center; color: var(--red); font-size: 13px; margin-top: 12px; display: none; }
-
-    #appScreen { display: none; flex-direction: column; min-height: 100vh; }
-    .topbar { height: var(--topbar-h); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 200; }
-    .topbar-left { display: flex; align-items: center; gap: 10px; }
-    .topbar-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; position: relative; flex-shrink: 0; }
-    .topbar-avatar .odot { position: absolute; bottom: 0; right: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--green); border: 2px solid var(--surface); }
-    .topbar-name { font-weight: 700; font-size: 14px; line-height: 1.2; }
-    .topbar-role { font-size: 11px; color: var(--text-sub); }
-    .icon-btn { width: 34px; height: 34px; border-radius: 9px; background: transparent; border: 1px solid var(--border); color: var(--text-sub); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .2s; }
+    #appScreen { display: none; padding-bottom: 80px; }
+    #loginScreen { height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 20px; margin-bottom: 12px; }
     
-    .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: var(--tabbar-h); display: flex; background: var(--surface); border-top: 1px solid var(--border); z-index: 200; padding-bottom: env(safe-area-inset-bottom, 0); }
-    .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; color: var(--text-dim); font-size: 10px; font-weight: 600; letter-spacing: .3px; transition: color .2s; }
-    .tab-item .ti { font-size: 20px; line-height: 1; }
+    .topbar { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: var(--tabbar-h); background: var(--surface); border-top: 1px solid var(--border); display: flex; z-index: 100; }
+    .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: var(--text-sub); gap: 4px; }
     .tab-item.active { color: var(--text); }
 
-    .content { padding: 16px; padding-bottom: calc(var(--tabbar-h) + 16px); max-width: 600px; margin: 0 auto; width: 100%; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .sec-head { font-size: 22px; font-weight: 800; letter-spacing: -.4px; margin-bottom: 3px; }
-    .sec-sub  { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; }
+    input, textarea, select { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-family: var(--font); outline: none; margin-top: 5px; }
+    .btn-p { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 16px; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+    .btn-p:active { transform: scale(0.98); opacity: 0.9; }
 
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
-    .card-title { font-size: 10.5px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
-    .input-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
-    .input-row label { width: 46px; font-weight: 700; font-size: 13px; flex-shrink: 0; }
-    .input-row .hint { font-size: 11px; color: var(--text-sub); width: 68px; flex-shrink: 0; text-align: right; font-family: var(--mono); }
-    input[type="number"], input[type="text"], input[type="password"], textarea { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px; font-family: var(--font); font-size: 14px; outline: none; transition: border-color .2s; }
-    .if  { flex: 1; width: 100%; }
-    .ifw { width: 100%; display: block; }
-    textarea.ta { width: 100%; min-height: 68px; resize: vertical; display: block; margin-bottom: 8px; }
-
-    .btn-p { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 15px; border-radius: 10px; font-family: var(--font); font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 9px; }
-    .btn-s { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 13px; border-radius: 10px; font-family: var(--font); font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 9px; }
-
-    .result-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; line-height: 1.8; margin-bottom: 12px; }
-    #confirmBanner { display: none; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 12px; }
-    .captcha-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; cursor: pointer; }
-    
-    .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 10px; cursor: pointer; }
-    .history-hd { display: flex; justify-content: space-between; align-items: center; font-size: 14px;}
-    .history-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: var(--mono); font-size: 12px; line-height: 1.75; white-space: pre-wrap; }
-
-    #pageChat.active { display: flex; flex-direction: column; height: calc(100vh - var(--topbar-h) - var(--tabbar-h)); padding-bottom: 0; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 10px 0; display: flex; flex-direction: column; gap: 8px; }
-    .chat-msg { max-width: 78%; position: relative; }
-    .chat-msg.me { align-self: flex-end; }
-    .chat-msg.other { align-self: flex-start; }
-    .chat-sender { font-size: 11px; color: var(--text-sub); font-weight: 700; margin-bottom: 3px; }
-    .chat-bubble { padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.5; word-break: break-word; }
-    .chat-msg.me .chat-bubble { background: var(--text); color: var(--bg); border-bottom-right-radius: 4px; }
-    .chat-msg.other .chat-bubble { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-    .chat-photo { max-width: 100%; border-radius: 8px; margin-top: 5px; display: block; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-    .chat-input-area { border-top: 1px solid var(--border); padding: 10px 0; background: var(--bg); }
-    .chat-input-row { display: flex; gap: 8px; align-items: center; }
-    .chat-input { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 24px; font-family: var(--font); font-size: 14px; outline: none; }
-    .chat-btn-img { width: 42px; height: 42px; border-radius: 50%; background: var(--surface); color: var(--text); border: 1px solid var(--border); font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;}
-    .chat-send { width: 42px; height: 42px; border-radius: 50%; background: var(--text); color: var(--bg); border: none; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;}
-
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); display: none; justify-content: center; align-items: center; z-index: 500; padding: 24px; }
-    .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 26px 24px; width: 100%; max-width: 340px; text-align: center; }
-    .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-    .modal-sub { font-size: 13px; color: var(--text-sub); margin-bottom: 22px; }
-    
-    .footer { text-align: center; font-size: 11px; color: var(--text-dim); padding: 28px 0 8px; letter-spacing: 2px; text-transform: uppercase; }
+    /* CHAT AREA */
+    .chat-messages { height: calc(100vh - 200px); overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+    .bubble { padding: 12px 16px; border-radius: 18px; font-size: 14px; max-width: 85%; position: relative; line-height: 1.4; }
+    .bubble.me { align-self: flex-end; background: var(--text); color: var(--bg); border-bottom-right-radius: 4px; }
+    .bubble.other { align-self: flex-start; background: var(--surface2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .chat-meta { font-size: 9px; opacity: 0.6; margin-bottom: 2px; font-weight: bold; }
   </style>
 </head>
-<body>
+<body data-theme="dark">
 
-<div id="loadingOverlay"><div class="spinner"></div><span style="color:var(--text-sub);font-size:13px" id="loaderText">Memproses...</span></div>
-<div id="toast"></div>
+<div id="loadingOverlay"><div class="spinner"></div></div>
+
+<div id="dynNotif" class="notif-popup">
+  <div class="notif-icon" id="nIcon">💬</div>
+  <div style="flex:1">
+    <div id="nTitle" style="font-weight:800;font-size:13px">Judul</div>
+    <div id="nBody" style="font-size:12px;color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:250px">Pesan...</div>
+  </div>
+</div>
 
 <div id="loginScreen">
-  <div class="login-card">
-    <div class="login-brand">
-      <span class="logo-icon">🍢</span>
-      <div class="logo-name">PENTOL JAYA</div>
-      <div class="logo-sub">Sistem Laporan & Monitoring · Gresik</div>
+  <div class="card" style="width:100%;max-width:350px">
+    <div style="text-align:center;margin-bottom:25px">
+      <h1 style="font-size:24px;letter-spacing:-1px">PENTOL JAYA <span style="font-size:10px;background:var(--text);color:var(--bg);padding:2px 6px;border-radius:5px">V8</span></h1>
+      <p style="font-size:12px;color:var(--text-sub)">Cloud Monitoring System</p>
     </div>
-    <label class="f-label">Username</label>
-    <input type="text" class="f-input" id="loginUser" placeholder="Masukkan username" onkeydown="if(event.key==='Enter')doLogin()">
-    <label class="f-label">Password</label>
-    <input type="password" class="f-input" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">Masuk →</button>
-    <div class="login-err" id="loginErr">Username atau password salah.</div>
+    <input type="text" id="loginUser" placeholder="Username">
+    <input type="password" id="loginPass" placeholder="Password">
+    <button class="btn-p" onclick="doLogin()">MASUK</button>
   </div>
 </div>
 
 <div id="appScreen">
   <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-avatar" id="topAvatar">?<span class="odot"></span></div>
-      <div><div class="topbar-name" id="topName">-</div><div class="topbar-role" id="topRole">-</div></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div id="topAvatar" style="width:36px;height:36px;background:var(--text);color:var(--bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900">?</div>
+      <div>
+        <div id="topName" style="font-weight:800;font-size:14px">User</div>
+        <div id="topRole" style="font-size:10px;color:var(--green);font-weight:700">ONLINE</div>
+      </div>
     </div>
-    <div class="topbar-right">
-      <button class="icon-btn" onclick="openModal('logoutModal')" title="Keluar">⏏</button>
-    </div>
+    <div onclick="confirmLogout()" style="font-size:18px;cursor:pointer">⏏</div>
   </div>
 
-  <div class="content" id="contentWrap">
+  <div class="content" style="padding:15px">
     
     <div class="page active" id="pageLaporan">
-      <div class="sec-head">Buat Laporan</div>
-      <div class="sec-sub">Isi data laporan harian dengan benar</div>
-
       <div class="card">
-        <div class="card-title">Tanggal Laporan</div>
-        <input type="text" id="tanggal" class="ifw">
+        <label style="font-size:10px;font-weight:800;color:var(--text-sub)">TANGGAL LAPORAN</label>
+        <input type="text" id="tanggal">
       </div>
-
       <div class="card">
-        <div class="card-title">Stok Awal</div>
-        <div class="input-row"><label>PB</label><input type="number" class="if" id="sa_pb" value="0"></div>
-        <div class="input-row"><label>PBK</label><input type="number" class="if" id="sa_pbk" value="0"></div>
-        <div class="input-row"><label>PK</label><input type="number" class="if" id="sa_pk" value="0"></div>
-        <div class="input-row"><label>PKS</label><input type="number" class="if" id="sa_pks" value="0"></div>
-        <div class="input-row"><label>PT</label><input type="number" class="if" id="sa_pt" value="0"></div>
-        <div class="input-row"><label>TH</label><input type="number" class="if" id="sa_th" value="0"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Stok Keluar (Qty)</div>
-        <div class="input-row"><label>PB</label><input type="number" class="if" id="sk_pb" value="0"><span class="hint">×75.000</span></div>
-        <div class="input-row"><label>PBK</label><input type="number" class="if" id="sk_pbk" value="0"><span class="hint">×30.000</span></div>
-        <div class="input-row"><label>PK</label><input type="number" class="if" id="sk_pk" value="0"><span class="hint">×25.000</span></div>
-        <div class="input-row"><label>PKS</label><input type="number" class="if" id="sk_pks" value="0"><span class="hint">×62.500</span></div>
-        <div class="input-row"><label>PT</label><input type="number" class="if" id="sk_pt" value="0"><span class="hint">×75.000</span></div>
-        <div class="input-row"><label>TH</label><input type="number" class="if" id="sk_th" value="0"><span class="hint">×62.500</span></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Keuangan</div>
-        <textarea id="rincian_pengeluaran" class="ta" placeholder="Rincian Pengeluaran..."></textarea>
-        <div class="input-row"><label style="width:130px">Tot Pengeluaran</label><input type="number" class="if" id="total_pengeluaran" value="0"></div>
-        <div class="input-row"><label style="width:130px">Omset</label><input type="number" class="if" id="omset" value="0"></div>
-        <div class="input-row"><label style="width:130px">Sisa Dandang KMRN</label><input type="number" class="if" id="sd_kemarin" value="0"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Sisa Dandang Hari Ini</div>
-        <div class="input-row"><label>PB</label><input type="number" class="if" id="sd_pb" value="0"><span class="hint">×3.000</span></div>
-        <div class="input-row"><label>PK</label><input type="number" class="if" id="sd_pk" value="0"><span class="hint">×500</span></div>
-        <div class="input-row"><label>PT</label><input type="number" class="if" id="sd_pt" value="0"><span class="hint">×1.500</span></div>
-        <div class="input-row"><label>TH</label><input type="number" class="if" id="sd_th" value="0"><span class="hint">×500</span></div>
-      </div>
-
-      <label class="captcha-row" for="captchaCheck">
-        <input type="checkbox" id="captchaCheck" style="width:18px;height:18px;">
-        <span>Saya sudah memeriksa data yang diisi</span>
-      </label>
-
-      <button class="btn-p" id="btnGenerate" onclick="startProcess()">Preview Laporan</button>
-
-      <div id="result_container" style="display:none">
-        <div class="result-box" id="output"></div>
-        <div id="confirmBanner">
-          <div class="cb-title" style="font-weight:bold;margin-bottom:8px">Konfirmasi Pengiriman</div>
-          <button class="btn-p" onclick="kirimLaporan()">✓ Kirim ke Database Cloud</button>
-          <button class="btn-s" onclick="batalKirim()">← Perbaiki</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label style="font-size:10px">STOK AWAL</label><input type="number" id="sa_pb" value="0"></div>
+          <div><label style="font-size:10px">STOK KELUAR</label><input type="number" id="sk_pb" value="0"></div>
+        </div>
+        <div style="margin-top:10px">
+          <label style="font-size:10px">OMSET HARI INI</label>
+          <input type="number" id="omset" value="0">
         </div>
       </div>
-      <div class="footer">BY | @ManDev Official<br>App Version: v7.0.0 (Cloud Sync)</div>
+      <button class="btn-p" onclick="generatePreview()">PREVIEW & KIRIM</button>
+      
+      <div id="res_wrap" style="display:none;margin-top:15px">
+        <div id="output" style="background:var(--surface2);padding:15px;border-radius:12px;font-family:monospace;font-size:12px;border:1px dashed var(--border)"></div>
+        <button class="btn-p" style="background:var(--green);color:white" onclick="kirimKeCloud()">KONFIRMASI KIRIM</button>
+      </div>
     </div>
 
     <div class="page" id="pageChat">
-      <div class="sec-head" style="padding-top:16px;">Grup Chat</div>
-      <div class="chat-messages" id="chatMessages"></div>
-      <div class="chat-input-area">
-        <div class="chat-input-row">
-          <input type="file" id="chatImgInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
-          <button class="chat-btn-img" onclick="document.getElementById('chatImgInput').click()">📷</button>
-          <input type="text" class="chat-input" id="chatInput" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter')sendChat()">
-          <button class="chat-send" onclick="sendChat()">↑</button>
-        </div>
+      <div class="chat-messages" id="chatBox"></div>
+      <div style="position:fixed;bottom:75px;left:15px;right:15px;display:flex;gap:8px">
+        <input type="text" id="chatIn" placeholder="Tulis pesan..." style="border-radius:25px;padding-left:20px">
+        <button onclick="sendChat()" style="background:var(--text);color:var(--bg);border:none;width:50px;height:50px;border-radius:50%;font-weight:bold">↑</button>
       </div>
     </div>
 
-    <div class="page" id="pageDatabase">
-      <div class="sec-head">Database Laporan</div>
-      <div class="sec-sub">Semua laporan sinkron secara realtime</div>
-      <div id="historyList">Memuat data dari cloud...</div>
-      <div class="footer">BY | @ManDev Official</div>
+    <div class="page" id="pageSettings">
+      <div class="card">
+        <label style="font-size:10px;font-weight:800">TEMA APLIKASI</label>
+        <select id="setTheme" onchange="changeTheme()">
+          <option value="dark">Dark Monochrome</option>
+          <option value="light">Light Mode</option>
+        </select>
+      </div>
+      <div class="card" style="text-align:center">
+        <p style="font-size:12px;color:var(--text-sub)">Status Akun</p>
+        <div id="vipStatus" style="font-weight:800;font-size:18px;margin:5px 0">REGULER</div>
+        <button class="btn-p" onclick="upgradeVIP()" id="vipBtn">UPGRADE VIP (RP 500)</button>
+      </div>
     </div>
-
   </div>
-  <nav class="tabbar" id="tabBar"></nav>
-</div>
 
-<div class="modal-overlay" id="logoutModal">
-  <div class="modal-box">
-    <div class="modal-title">Keluar Akun</div>
-    <div class="modal-sub">Yakin ingin keluar?</div>
-    <button class="btn-p" style="background:var(--red);color:#fff;" onclick="confirmLogout()">Ya, Keluar</button>
-    <button class="btn-s" onclick="closeModal('logoutModal')">Batal</button>
+  <div class="tabbar">
+    <div class="tab-item active" onclick="switchPg('pageLaporan')"><span class="ti">📋</span><span>Laporan</span></div>
+    <div class="tab-item" onclick="switchPg('pageChat')"><span class="ti">💬</span><span>Chat</span></div>
+    <div class="tab-item" onclick="switchPg('pageSettings')"><span class="ti">⚙️</span><span>Settings</span></div>
   </div>
 </div>
 
 <script>
-// ==========================================
-// 1. KONFIGURASI FIREBASE ANDA DI SINI
-// ==========================================
+// --- KONFIGURASI FIREBASE ANDA ---
 const firebaseConfig = {
   apiKey: "AIzaSyAILu80E4XZ3tYEg5q2KiGEYSRt-UXwbv8",
   authDomain: "pentol-jaya.firebaseapp.com",
@@ -301,282 +170,172 @@ const firebaseConfig = {
   measurementId: "G-KM9Y92CC2G"
 };
 
-// Inisialisasi Firebase
 firebase.initializeApp(firebaseConfig);
-const db_firestore = firebase.firestore();
+const db = firebase.firestore();
 
-// ==========================================
-// 2. DATA AKUN
-// ==========================================
-const ACCOUNTS = {
-  'owner': { password: 'ownerfais', role: 'owner', displayName: 'Bos Owner', id: 'OWN-001' },
-  'penjual1': { password: '12345', role: 'penjual', displayName: 'Anomali', id: 'PJG-001' },
-  'penjual2': { password: '12345', role: 'penjual', displayName: 'Penjual Dua', id: 'PJG-002' }
+const USERS = {
+  'owner': { p: 'ownerfais', n: 'Bos Owner', r: 'owner' },
+  'penjual1': { p: '12345', n: 'Anomali', r: 'penjual' }
 };
 
-let currentUser = null;
-let pendingReport = null;
+let me = null;
+let firstLoad = true;
 
-// ==========================================
-// 3. FUNGSI UTILITAS
-// ==========================================
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2600);
-}
-function showLoader(txt="Memproses...") { document.getElementById('loaderText').textContent=txt; document.getElementById('loadingOverlay').style.display='flex'; }
-function hideLoader() { document.getElementById('loadingOverlay').style.display='none'; }
-function closeModal(id) { document.getElementById(id).style.display='none'; }
-function openModal(id) { document.getElementById(id).style.display='flex'; }
-function val(id) { return Number(document.getElementById(id).value) || 0; }
-function fmt(n) { return n === 0 ? '0' : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
-function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+// --- DYNAMIC NOTIFICATION SYSTEM ---
+function triggerNotif(title, text, icon = "💬") {
+  const el = document.getElementById('dynNotif');
+  document.getElementById('nTitle').textContent = title;
+  document.getElementById('nBody').textContent = text;
+  document.getElementById('nIcon').textContent = icon;
+  
+  el.classList.add('show');
+  
+  // Vibration (Hanya untuk Android)
+  if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
 
-// ==========================================
-// 4. LOGIN & LOGOUT
-// ==========================================
-function doLogin() {
-  const uname = document.getElementById('loginUser').value.trim().toLowerCase();
-  const pass = document.getElementById('loginPass').value;
-  if (!ACCOUNTS[uname] || ACCOUNTS[uname].password !== pass) {
-    document.getElementById('loginErr').style.display = 'block';
-    return;
+  // Browser Native Notif (Jika App di Background)
+  if (document.hidden && Notification.permission === "granted") {
+    new Notification(title, { body: text });
   }
-  showLoader("Masuk ke Cloud...");
-  setTimeout(() => {
-    hideLoader();
-    currentUser = { username: uname, ...ACCOUNTS[uname] };
-    localStorage.setItem('session_pentol', uname);
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display = 'flex';
-    initApp();
-  }, 1000);
+
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// --- CORE APP ---
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if(USERS[u] && USERS[u].p === p) {
+    me = { id: u, ...USERS[u] };
+    localStorage.setItem('pentol_v8_user', u);
+    startApp();
+  } else {
+    alert("Login Gagal!");
+  }
+}
+
+function startApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+  document.getElementById('topName').textContent = me.n;
+  document.getElementById('topAvatar').textContent = me.n.charAt(0);
+  
+  const d = new Date();
+  document.getElementById('tanggal').value = d.toLocaleDateString('id-ID');
+  
+  if ("Notification" in window) Notification.requestPermission();
+  
+  applyTheme(localStorage.getItem('theme') || 'dark');
+  listenRealtime();
+}
+
+function switchPg(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// --- FIREBASE REALTIME ---
+function listenRealtime() {
+  // Listen Chat
+  db.collection("chat").orderBy("time", "desc").limit(20).onSnapshot(snap => {
+    const box = document.getElementById('chatBox');
+    let html = "";
+    snap.docs.reverse().forEach(doc => {
+      const m = doc.data();
+      const isMe = m.uid === me.id;
+      html += `
+        <div class="bubble ${isMe?'me':'other'}">
+          ${!isMe ? `<div class="chat-meta">${m.un}</div>` : ''}
+          ${m.txt}
+        </div>`;
+      
+      // Notif Jika Ada Chat Baru & Bukan Saya
+      if(!firstLoad && !isMe) triggerNotif(`Pesan dari ${m.un}`, m.txt, "💬");
+    });
+    box.innerHTML = html;
+    box.scrollTop = box.scrollHeight;
+    firstLoad = false;
+  });
+
+  // Listen Laporan (Khusus Owner dapat notif)
+  if(me.r === 'owner') {
+    db.collection("laporan").orderBy("time", "desc").limit(1).onSnapshot(snap => {
+      if(!snap.empty && !firstLoad) {
+        const lp = snap.docs[0].data();
+        triggerNotif("📋 Laporan Masuk!", `Laporan baru dari ${lp.user}`, "📊");
+      }
+    });
+  }
+}
+
+function sendChat() {
+  const inp = document.getElementById('chatIn');
+  if(!inp.value) return;
+  db.collection("chat").add({
+    uid: me.id, un: me.n, txt: inp.value, time: Date.now()
+  });
+  inp.value = "";
+}
+
+// --- LAPORAN ---
+function generatePreview() {
+  const sa = document.getElementById('sa_pb').value;
+  const sk = document.getElementById('sk_pb').value;
+  const res = `LAPORAN CLOUD V8\n-----------------\nUser: ${me.n}\nStok Awal: ${sa}\nStok Keluar: ${sk}\nOmset: ${document.getElementById('omset').value}\n-----------------\nStatus: Pending...`;
+  document.getElementById('output').textContent = res;
+  document.getElementById('res_wrap').style.display = 'block';
+}
+
+function kirimKeCloud() {
+  const dat = {
+    user: me.n,
+    uid: me.id,
+    content: document.getElementById('output').textContent,
+    time: Date.now()
+  };
+  document.getElementById('loadingOverlay').style.display = 'flex';
+  db.collection("laporan").add(dat).then(() => {
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('res_wrap').style.display = 'none';
+    triggerNotif("Sistem", "Laporan Berhasil Terkirim!", "✅");
+  });
+}
+
+// --- SETTINGS ---
+function changeTheme() {
+  const t = document.getElementById('setTheme').value;
+  localStorage.setItem('theme', t);
+  applyTheme(t);
+}
+function applyTheme(t) {
+  document.body.setAttribute('data-theme', t);
+  document.getElementById('setTheme').value = t;
+}
+
+function upgradeVIP() {
+  localStorage.setItem('vip_' + me.id, 'true');
+  document.getElementById('vipStatus').textContent = "VIP PREMIUM";
+  document.getElementById('vipBtn').style.display = "none";
+  triggerNotif("VIP", "Akun Anda Sekarang Premium!", "💎");
 }
 
 function confirmLogout() {
-  localStorage.removeItem('session_pentol');
-  window.location.reload();
+  localStorage.removeItem('pentol_v8_user');
+  location.reload();
 }
 
-const savedSession = localStorage.getItem('session_pentol');
-if (savedSession && ACCOUNTS[savedSession]) {
-  currentUser = { username: savedSession, ...ACCOUNTS[savedSession] };
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display = 'flex';
-  initApp();
+// Auto Session
+const saved = localStorage.getItem('pentol_v8_user');
+if(saved && USERS[saved]) {
+  me = { id: saved, ...USERS[saved] };
+  startApp();
 }
 
-function initApp() {
-  document.getElementById('topAvatar').childNodes[0].textContent = currentUser.displayName.charAt(0);
-  document.getElementById('topName').textContent = currentUser.displayName;
-  document.getElementById('topRole').textContent = currentUser.role === 'owner' ? 'Owner Akses Penuh' : 'Penjual Cabang';
-  
-  const d = new Date();
-  document.getElementById('tanggal').value = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
-
-  buildTabBar();
-  switchPage('pageLaporan');
-  
-  listenChats();
-  if(currentUser.role === 'owner') listenReports();
-}
-
-function buildTabBar() {
-  let tabs = '';
-  if (currentUser.role === 'owner') {
-    tabs = `<div class="tab-item" onclick="switchPage('pageLaporan')"><span class="ti">📋</span><span>Laporan</span></div>
-            <div class="tab-item" onclick="switchPage('pageChat')"><span class="ti">💬</span><span>Chat</span></div>
-            <div class="tab-item" onclick="switchPage('pageDatabase')"><span class="ti">🗂</span><span>Database</span></div>`;
-  } else {
-    tabs = `<div class="tab-item" onclick="switchPage('pageLaporan')"><span class="ti">📝</span><span>Laporan</span></div>
-            <div class="tab-item" onclick="switchPage('pageChat')"><span class="ti">💬</span><span>Chat</span></div>`;
-  }
-  document.getElementById('tabBar').innerHTML = tabs;
-}
-
-function switchPage(pid) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(pid).classList.add('active');
-  if(pid === 'pageChat') {
-    const box = document.getElementById('chatMessages');
-    box.scrollTop = box.scrollHeight;
-  }
-}
-
-// ==========================================
-// 5. SISTEM LAPORAN -> FIREBASE
-// ==========================================
-function startProcess() {
-  if (!document.getElementById('captchaCheck').checked) return showToast('Centang konfirmasi!');
-  showLoader("Menghitung...");
-  setTimeout(() => { hideLoader(); generateReport(); }, 800);
-}
-
-function generateReport() {
-  const sa={pb:val('sa_pb'),pbk:val('sa_pbk'),pk:val('sa_pk'),pks:val('sa_pks'),pt:val('sa_pt'),th:val('sa_th')};
-  const sk={pb:val('sk_pb'),pbk:val('sk_pbk'),pk:val('sk_pk'),pks:val('sk_pks'),pt:val('sk_pt'),th:val('sk_th')};
-  const ssk={pb:sk.pb*75000,pbk:sk.pbk*30000,pk:sk.pk*25000,pks:sk.pks*62500,pt:sk.pt*75000,th:sk.th*62500};
-  const totSk = ssk.pb+ssk.pbk+ssk.pk+ssk.pks+ssk.pt+ssk.th;
-  const sd={pb:val('sd_pb'),pk:val('sd_pk'),pt:val('sd_pt'),th:val('sd_th')};
-  const ssd={pb:sd.pb*3000,pk:sd.pk*500,pt:sd.pt*1500,th:sd.th*500};
-  const totSd = ssd.pb+ssd.pk+ssd.pt+ssd.th;
-  
-  const sdKemarin = val('sd_kemarin');
-  const omset = val('omset');
-  const pengeluaran = val('total_pengeluaran');
-  const rincian = document.getElementById('rincian_pengeluaran').value || '-';
-  const A = totSk + sdKemarin;
-  const B = omset + pengeluaran + totSd;
-  const selisih = B - A;
-  const ss = { pb:sa.pb-sk.pb,pbk:sa.pbk-sk.pbk,pk:sa.pk-sk.pk,pks:sa.pks-sk.pks,pt:sa.pt-sk.pt,th:sa.th-sk.th };
-
-  let teks = `PENTOL JAYA GRESIK\nTanggal : ${document.getElementById('tanggal').value}\nKasir   : ${currentUser.displayName}\nID      : ${currentUser.id}\n\n`;
-  teks += `Stok awal :\nPB : ${sa.pb||''}\nPBK : ${sa.pbk||''}\nPK : ${sa.pk||''}\nPKS : ${sa.pks||''}\nPT : ${sa.pt||''}\nTH : ${sa.th||''}\n\n`;
-  teks += `Stok keluar :\nPB : ${sk.pb||''} x 75.000 = ${fmt(ssk.pb)}\nPBK : ${sk.pbk||''} x 30.000 = ${fmt(ssk.pbk)}\nPK : ${sk.pk||''} x 25.000 = ${fmt(ssk.pk)}\nPKS : ${sk.pks||''} x 62.500 = ${fmt(ssk.pks)}\nPT  : ${sk.pt||''} x 75.000 = ${fmt(ssk.pt)}\nTH : ${sk.th||''} x 62.500 = ${fmt(ssk.th)}\n\nTotal stok keluar = ${fmt(totSk)}\n\n`;
-  teks += `Pengeluaran :\n${rincian}\n\nTotal = ${fmt(pengeluaran)}\n\nOmset = ${fmt(omset)}\n\n`;
-  teks += `Sisa dandang :\nPB : ${sd.pb||''} x 3.000 = ${fmt(ssd.pb)}\nPK : ${sd.pk||''} x 500 = ${fmt(ssd.pk)}\nPT : ${sd.pt||''} x 1.500 = ${fmt(ssd.pt)}\nTH : ${sd.th||''} x 500 = ${fmt(ssd.th)}\n\nTotal = ${fmt(totSd)}\n\n`;
-  teks += `A : ${fmt(totSk)} + ${fmt(sdKemarin)} = ${fmt(A)}\nB : ${fmt(omset)} + ${fmt(pengeluaran)} + ${fmt(totSd)} = ${fmt(B)}\n\nHasil = B - A = ${fmt(B)} - ${fmt(A)} = ${selisih >= 0 ? '+' : '-'} ( ${fmt(Math.abs(selisih))} )\n\n`;
-  teks += `Sisa Stok :\nPB : ${ss.pb||''}\nPK : ${ss.pk||''}\nPKS : ${ss.pks||''}\nTH : ${ss.th||''}`;
-
-  document.getElementById('output').textContent = teks;
-  document.getElementById('result_container').style.display = 'block';
-  
-  pendingReport = {
-    id: Date.now(),
-    tanggal: document.getElementById('tanggal').value,
-    konten: teks,
-    sender: currentUser.displayName,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  };
-
-  if(currentUser.role === 'owner') {
-    document.getElementById('confirmBanner').style.display = 'none';
-    showToast('Laporan Siap Disimpan');
-    kirimLaporan(); 
-  } else {
-    document.getElementById('confirmBanner').style.display = 'block';
-  }
-}
-
-function batalKirim() {
-  document.getElementById('result_container').style.display = 'none';
-}
-
-function kirimLaporan() {
-  if(!pendingReport) return;
-  showLoader("Mengirim ke Cloud...");
-  
-  db_firestore.collection("laporan").doc(pendingReport.id.toString()).set(pendingReport)
-  .then(() => {
-    hideLoader();
-    document.getElementById('result_container').style.display = 'none';
-    showToast("Laporan Berhasil Tersimpan! ✓");
-    
-    db_firestore.collection("chat").add({
-      id: Date.now(),
-      sender: "System",
-      text: `📋 Laporan dari ${currentUser.displayName} telah masuk.`,
-      isSystem: true,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  })
-  .catch((error) => {
-    hideLoader();
-    alert("Gagal kirim: " + error.message);
-  });
-}
-
-function listenReports() {
-  db_firestore.collection("laporan").orderBy("id", "desc").onSnapshot((snapshot) => {
-    const list = document.getElementById('historyList');
-    if (snapshot.empty) {
-      list.innerHTML = 'Belum ada data masuk dari penjual.';
-      return;
-    }
-    let html = '';
-    snapshot.forEach(doc => {
-      let item = doc.data();
-      html += `
-        <div class="history-item" onclick="document.getElementById('b_${item.id}').style.display = document.getElementById('b_${item.id}').style.display === 'block' ? 'none' : 'block'">
-          <div class="history-hd"><b>${item.tanggal}</b> - ${item.sender} <span style="color:var(--red);float:right;font-size:11px" onclick="db_firestore.collection('laporan').doc('${item.id}').delete()">Hapus</span></div>
-          <div class="history-body" id="b_${item.id}">${item.konten}</div>
-        </div>`;
-    });
-    list.innerHTML = html;
-  });
-}
-
-// ==========================================
-// 6. SISTEM CHAT -> FIREBASE
-// ==========================================
-function sendChat() {
-  const input = document.getElementById('chatInput');
-  const text = input.value.trim();
-  if(!text) return;
-  
-  const msg = {
-    id: Date.now(),
-    sender: currentUser.username,
-    senderName: currentUser.displayName,
-    role: currentUser.role,
-    text: text,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  
-  db_firestore.collection("chat").doc(msg.id.toString()).set(msg);
-  input.value = '';
-}
-
-function handleImageUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  showLoader("Mengunggah Foto..."); 
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 400; 
-      let scaleSize = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1;
-      canvas.width = img.width * scaleSize; canvas.height = img.height * scaleSize;
-      const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const base64 = canvas.toDataURL('image/jpeg', 0.5);
-
-      db_firestore.collection("chat").doc(Date.now().toString()).set({
-        id: Date.now(), sender: currentUser.username, senderName: currentUser.displayName,
-        text: "📸 Mengirim Foto", image: base64, timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => hideLoader()).catch(err => { hideLoader(); alert("Gagal kirim gambar."); });
-    }
-    img.src = evt.target.result;
-  }
-  reader.readAsDataURL(file);
-}
-
-function listenChats() {
-  db_firestore.collection("chat").orderBy("id", "asc").onSnapshot((snapshot) => {
-    let html = '';
-    snapshot.forEach(doc => {
-      let msg = doc.data();
-      if(msg.isSystem) {
-         html += `<div style="text-align:center;font-size:11px;color:var(--text-sub);margin:8px 0;">${msg.text}</div>`;
-      } else {
-         const isMe = msg.sender === currentUser.username;
-         const imgTag = msg.image ? `<img src="${msg.image}" class="chat-photo" />` : '';
-         const delBtn = isMe ? `<span style="color:var(--red);font-size:10px;cursor:pointer;margin-top:4px;display:block" onclick="db_firestore.collection('chat').doc('${msg.id}').delete()">Hapus</span>` : '';
-         html += `
-          <div class="chat-msg ${isMe ? 'me' : 'other'}">
-            ${!isMe ? `<div class="chat-sender">${msg.senderName}</div>` : ''}
-            <div class="chat-bubble">${esc(msg.text)}${imgTag}</div>
-            ${delBtn}
-          </div>`;
-      }
-    });
-    const box = document.getElementById('chatMessages');
-    box.innerHTML = html || '<div style="text-align:center;color:gray;padding-top:20px;">Belum ada pesan</div>';
-    
-    setTimeout(() => box.scrollTop = box.scrollHeight, 100);
-  });
+// Service Worker (Biar bisa jalan di Background)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('data:text/javascript;base64,' + btoa('self.addEventListener("fetch", function(event) {});'));
 }
 </script>
 </body>
