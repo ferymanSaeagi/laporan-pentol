@@ -545,32 +545,38 @@ function requestPushPermission() {
   
   Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
-      showToast("Mengaktifkan Notif Chrome...");
+      showToast("Sedang sinkronisasi Firebase...");
       
-      // KUNCI PERBAIKAN: Kita tunggu Service Worker siap dulu, baru minta Token ke Firebase
-      navigator.serviceWorker.ready.then((registration) => {
-        messaging.getToken({ 
+      // Kita daftarkan ulang SW-nya pakai nama folder GitHub kamu biar gak nyasar
+      navigator.serviceWorker.register('/laporan-pentol/firebase-messaging-sw.js')
+      .then((registration) => {
+        
+        // Paksa Firebase pakai SW yang sudah jelas jalurnya
+        return messaging.getToken({ 
           vapidKey: 'BMhKWzZFhBErpERno5qgytnu3f-r8wDQCChtbBTsHlxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEfDrr3OVQXek',
-          serviceWorkerRegistration: registration // Ini yang bikin Firebase nggak nyasar
-        })
-        .then((currentToken) => {
-          if (currentToken) {
-            console.log("Token FCM Berhasil Didapat:", currentToken);
-            showToast("Notif Chrome Aktif! ✓");
-          } else {
-            showToast("Gagal mengambil token FCM");
-          }
-        }).catch((err) => {
-          console.error('Error saat mengambil token', err);
-          showToast("Error Aktivasi Notif");
+          serviceWorkerRegistration: registration 
         });
+        
+      })
+      .then((currentToken) => {
+        if (currentToken) {
+          console.log("Token FCM Berhasil:", currentToken);
+          showToast("Notif Chrome Aktif! ✓");
+        } else {
+          showToast("Gagal mengambil token");
+        }
+      }).catch((err) => {
+        // Nah ini dia, kalau error bakal muncul pop-up alasan pastinya!
+        alert("Penyebab Error: " + err.message);
+        showToast("Error Aktivasi Notif");
       });
       
     } else {
-      showToast("Izin notifikasi ditolak!");
+      showToast("Izin notifikasi ditolak sistem!");
     }
   });
 }
+
 
 
 // Menerima notifikasi saat website sedang dibuka
