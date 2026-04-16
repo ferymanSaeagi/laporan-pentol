@@ -18,7 +18,7 @@
       --surface:   #161616;
       --surface2:  #1e1e1e;
       --border:    #2a2a2a;
-      --border2:   #333;
+      --bfunction requestPushPerorder2:   #333;
       --text:      #f0f0f0;
       --text-sub:  #999;
       --text-dim:  #555;
@@ -547,13 +547,12 @@ function requestPushPermission() {
     if (permission === 'granted') {
       showToast("Sedang sinkronisasi Firebase...");
       
-      // Kita daftarkan ulang SW-nya pakai nama folder GitHub kamu biar gak nyasar
       navigator.serviceWorker.register('/laporan-pentol/firebase-messaging-sw.js')
       .then((registration) => {
         
-        // Paksa Firebase pakai SW yang sudah jelas jalurnya
+        // KUNCI SUDAH DIPERBAIKI (Perhatikan huruf I besar di tengahnya)
         return messaging.getToken({ 
-          vapidKey: 'BMhKWzZFhBErpERno5qgytnu3f-r8wDQCChtbBTsHlxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEfDrr3OVQXek',
+          vapidKey: 'BMhKWzZFhBErpERno5qgytnu3f-r8wDQCChtbBTsHIxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEfDrr3OVQXek',
           serviceWorkerRegistration: registration 
         });
         
@@ -566,7 +565,6 @@ function requestPushPermission() {
           showToast("Gagal mengambil token");
         }
       }).catch((err) => {
-        // Nah ini dia, kalau error bakal muncul pop-up alasan pastinya!
         alert("Penyebab Error: " + err.message);
         showToast("Error Aktivasi Notif");
       });
@@ -576,6 +574,7 @@ function requestPushPermission() {
     }
   });
 }
+
 
 
 
