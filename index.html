@@ -542,41 +542,50 @@ function requestPushPermission() {
     showToast("Browser tidak support Notifikasi");
     return;
   }
-  
-  Notification.requestPermission().then((permission) => {
-    if (permission === 'granted') {
-      showToast("Sedang sinkronisasi Firebase...");
-      
-      navigator.serviceWorker.register('/laporan-pentol/firebase-messaging-sw.js')
-      .then((registration) => {
+
+  showToast("Mereset memori sistem...");
+
+  // JURUS NUKLIR 1: Hancurkan semua Service Worker yang nyangkut dan error
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
+  }).then(() => {
+    
+    // JURUS NUKLIR 2: Hapus paksa memori database Firebase di Chrome HP
+    indexedDB.deleteDatabase('firebase-messaging-database');
+
+    // Setelah bersih, baru kita minta izin dan token lagi
+    Notification.requestPermission().then((permission) => {
+      if (permission === 'granted') {
+        showToast("Sinkronisasi Firebase baru...");
         
-        // KUNCI SUDAH DIPERBAIKI (Perhatikan huruf I besar di tengahnya)
-        return messaging.getToken({ 
-          vapidKey: 'BMhKWzZFhBErpERno5qgytnu3f-r8wDQCChtbBTsHIxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEfDrr3OVQXek',
-          serviceWorkerRegistration: registration 
+        // Pakai ./ agar otomatis menyesuaikan nama folder GitHub kamu
+        navigator.serviceWorker.register('./firebase-messaging-sw.js')
+        .then((registration) => {
+          return messaging.getToken({ 
+            vapidKey: 'BMhKWzZFhBErpERno5qgytnu3f-r8wDQCChtbBTsHIxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEfDrr3OVQXek',
+            serviceWorkerRegistration: registration 
+          });
+        })
+        .then((currentToken) => {
+          if (currentToken) {
+            console.log("Token FCM Berhasil:", currentToken);
+            showToast("Notif Chrome Aktif! ✓");
+          } else {
+            showToast("Token gagal dibuat.");
+          }
+        }).catch((err) => {
+          alert("Error: " + err.message + "\n\nPastikan Firebase Config sudah persis sama dengan di Console.");
         });
         
-      })
-      .then((currentToken) => {
-        if (currentToken) {
-          console.log("Token FCM Berhasil:", currentToken);
-          showToast("Notif Chrome Aktif! ✓");
-        } else {
-          showToast("Gagal mengambil token");
-        }
-      }).catch((err) => {
-        alert("Penyebab Error: " + err.message);
-        showToast("Error Aktivasi Notif");
-      });
-      
-    } else {
-      showToast("Izin notifikasi ditolak sistem!");
-    }
+      } else {
+        showToast("Izin ditolak sistem!");
+      }
+    });
+    
   });
 }
-
-
-
 
 // Menerima notifikasi saat website sedang dibuka
 messaging.onMessage((payload) => {
