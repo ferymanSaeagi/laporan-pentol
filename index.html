@@ -543,49 +543,41 @@ function requestPushPermission() {
     return;
   }
 
-  showToast("Mereset memori sistem...");
-
-  // JURUS NUKLIR 1: Hancurkan semua Service Worker yang nyangkut dan error
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) {
-      registration.unregister();
-    }
-  }).then(() => {
-    
-    // JURUS NUKLIR 2: Hapus paksa memori database Firebase di Chrome HP
-    indexedDB.deleteDatabase('firebase-messaging-database');
-
-    // Setelah bersih, baru kita minta izin dan token lagi
-    Notification.requestPermission().then((permission) => {
-      if (permission === 'granted') {
-        showToast("Sinkronisasi Firebase baru...");
-        
-        // Pakai ./ agar otomatis menyesuaikan nama folder GitHub kamu
-        navigator.serviceWorker.register('./firebase-messaging-sw.js')
-        .then((registration) => {
-          return messaging.getToken({ 
-            vapidKey: 'BMhKWzZFHbErpERno5qgytnu3f-r8wDQCChtbBTsHIxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEFdRr30VQXek',
-            serviceWorkerRegistration: registration 
-          });
-        })
-        .then((currentToken) => {
-          if (currentToken) {
-            console.log("Token FCM Berhasil:", currentToken);
-            showToast("Notif Chrome Aktif! ✓");
-          } else {
-            showToast("Token gagal dibuat.");
-          }
-        }).catch((err) => {
-          alert("Error: " + err.message + "\n\nPastikan Firebase Config sudah persis sama dengan di Console.");
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      showToast("Menyiapkan Service Worker...");
+      
+      // 1. Daftarkan Service Worker
+      navigator.serviceWorker.register('./firebase-messaging-sw.js')
+      .then((registration) => {
+        // 2. KUNCI PERBAIKAN: Tunggu sampai SW benar-benar AKTIF
+        return navigator.serviceWorker.ready;
+      })
+      .then((activeRegistration) => {
+        // 3. Setelah aktif, baru minta Token ke Firebase
+        showToast("Sinkronisasi Token...");
+        return messaging.getToken({ 
+          vapidKey: 'BMhKWzZFHbErpERno5qgytnu3f-r8wDQCChtbBTsHIxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEFdRr30VQXek',
+          serviceWorkerRegistration: activeRegistration 
         });
-        
-      } else {
-        showToast("Izin ditolak sistem!");
-      }
-    });
-    
+      })
+      .then((currentToken) => {
+        if (currentToken) {
+          console.log("Token FCM Berhasil:", currentToken);
+          showToast("Notif Chrome Aktif! ✓");
+        } else {
+          showToast("Gagal mendapat token.");
+        }
+      }).catch((err) => {
+        alert("Error Token: " + err.message);
+      });
+      
+    } else {
+      showToast("Izin notifikasi ditolak!");
+    }
   });
 }
+
 
 // Menerima notifikasi saat website sedang dibuka
 messaging.onMessage((payload) => {
