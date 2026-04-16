@@ -24,12 +24,16 @@
       --text-dim:  #555;
       --accent:    #f0f0f0;
       --green:     #22c55e;
+      --green-dim: rgba(34,197,94,.12);
       --red:       #ef4444;
       --red-dim:   rgba(239,68,68,.1);
+      --amber:     #f59e0b;
+      --amber-dim: rgba(245,158,11,.12);
       --topbar-h:  58px;
       --tabbar-h:  62px;
       --r:         12px;
       
+      /* --- VARIABEL DINAMIS DARI SETTINGS --- */
       --font-family: 'DM Sans', -apple-system, sans-serif;
       --font-size:   14px;
       --mono:        'DM Mono', 'Courier New', monospace;
@@ -46,15 +50,42 @@
       --accent:  #111;
     }
 
-    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; outline: none; }
+    *,*::before,*::after { 
+      box-sizing: border-box; margin: 0; padding: 0; 
+      -webkit-tap-highlight-color: transparent; 
+      outline: none;
+    }
     html { scroll-behavior: smooth; }
-    body { font-family: var(--font-family); font-size: var(--font-size); background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: var(--font-family);
+      font-size: var(--font-size);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
-    .spinner { width: 32px; height: 32px; border: 2.5px solid var(--border2); border-top-color: var(--text); border-radius: 50%; animation: spin .7s linear infinite; }
+    #loadingOverlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.88);
+      z-index: 9999; display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+    }
+    .spinner {
+      width: 32px; height: 32px; border: 2.5px solid var(--border2);
+      border-top-color: var(--text); border-radius: 50%; animation: spin .7s linear infinite;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    #toast { position: fixed; bottom: calc(var(--tabbar-h) + 12px); left: 50%; transform: translateX(-50%) translateY(8px); background: var(--text); color: var(--bg); padding: 9px 18px; border-radius: 24px; font-size: calc(var(--font-size) - 1px); font-weight: 600; opacity: 0; transition: opacity .25s, transform .25s; z-index: 9998; pointer-events: none; white-space: nowrap; }
+    #toast {
+      position: fixed; bottom: calc(var(--tabbar-h) + 12px);
+      left: 50%; transform: translateX(-50%) translateY(8px);
+      background: var(--text); color: var(--bg);
+      padding: 9px 18px; border-radius: 24px;
+      font-size: calc(var(--font-size) - 1px); font-weight: 600;
+      opacity: 0; transition: opacity .25s, transform .25s;
+      z-index: 9998; pointer-events: none; white-space: nowrap;
+    }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     #loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
@@ -66,7 +97,7 @@
     .f-label { display: block; font-size: calc(var(--font-size) - 3px); font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 7px; }
     .f-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); outline: none; transition: border-color .2s; margin-bottom: 16px; }
     .f-input:focus { border-color: var(--text-sub); }
-    .login-btn { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 14px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); font-weight: 700; cursor: pointer; margin-top: 4px; transition: opacity .2s; }
+    .login-btn { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 14px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); font-weight: 700; cursor: pointer; margin-top: 4px; letter-spacing: .3px; transition: opacity .2s; }
     .login-btn:active { opacity: .8; }
     .login-err { text-align: center; color: var(--red); font-size: calc(var(--font-size) - 1px); margin-top: 12px; display: none; }
     .login-hint { text-align: center; font-size: calc(var(--font-size) - 3px); color: var(--text-dim); margin-top: 20px; line-height: 1.8; }
@@ -81,6 +112,7 @@
     .topbar-role { font-size: calc(var(--font-size) - 3px); color: var(--text-sub); }
     .topbar-right { display: flex; gap: 7px; }
     .icon-btn { width: 34px; height: 34px; border-radius: 9px; background: transparent; border: 1px solid var(--border); color: var(--text-sub); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .2s; }
+    .icon-btn:hover { border-color: var(--border2); }
 
     .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: var(--tabbar-h); display: flex; background: var(--surface); border-top: 1px solid var(--border); z-index: 200; padding-bottom: env(safe-area-inset-bottom, 0); }
     .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; color: var(--text-dim); font-size: 10px; font-weight: 600; letter-spacing: .3px; transition: color .2s; position: relative; }
@@ -94,7 +126,7 @@
     .sec-sub  { font-size: calc(var(--font-size) - 1px); color: var(--text-sub); margin-bottom: 20px; }
 
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
-    .card-title { font-size: calc(var(--font-size) - 3px); font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+    .card-title { font-size: calc(var(--font-size) - 3.5px); font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
     .input-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
     .input-row label { width: 46px; font-weight: 700; font-size: calc(var(--font-size) - 1px); flex-shrink: 0; }
     .input-row .hint { font-size: calc(var(--font-size) - 3px); color: var(--text-sub); width: 68px; flex-shrink: 0; text-align: right; font-family: var(--mono); }
@@ -103,7 +135,7 @@
     .if  { flex: 1; } .ifw { width: 100%; display: block; }
     textarea.ta { width: 100%; min-height: 68px; resize: vertical; display: block; margin-bottom: 8px; }
 
-    .btn-p { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 15px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); font-weight: 700; cursor: pointer; margin-bottom: 9px; transition: opacity .15s; }
+    .btn-p { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 15px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); font-weight: 700; cursor: pointer; margin-bottom: 9px; letter-spacing: .2px; transition: opacity .15s; }
     .btn-p:active { opacity: .8; }
     .btn-s { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 13px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); font-weight: 600; cursor: pointer; margin-bottom: 9px; transition: border-color .2s; }
     .btn-s:hover { border-color: var(--border2); }
@@ -118,7 +150,6 @@
     .captcha-row input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; background: var(--bg); accent-color: var(--text); }
     .captcha-row span { font-size: calc(var(--font-size) - 1px); }
 
-    /* ACCORDION LIST */
     .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 10px; cursor: pointer; }
     .history-hd { display: flex; justify-content: space-between; align-items: center; }
     .history-date { font-weight: 700; font-size: var(--font-size); }
@@ -126,7 +157,7 @@
     .history-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: var(--mono); font-size: calc(var(--font-size) - 2px); line-height: 1.75; white-space: pre-wrap; }
     .del-btn { background: transparent; color: var(--red); border: 1px solid rgba(239,68,68,.25); padding: 4px 10px; border-radius: 7px; font-size: calc(var(--font-size) - 2px); font-weight: 700; cursor: pointer; flex-shrink: 0; margin-left: 8px; }
 
-    /* CHAT PAGE */
+    /* --- CHAT PAGE --- */
     #pageChat.active { display: flex; flex-direction: column; height: calc(100vh - var(--topbar-h) - var(--tabbar-h)); padding-bottom: 0; }
     #pageChat.active .chat-header { padding: 16px 0 10px; }
     .chat-header .sec-head { margin-bottom: 2px; }
@@ -144,6 +175,7 @@
     .chat-msg.other .chat-time { justify-content: flex-start; }
     .chat-del-btn { font-size: calc(var(--font-size) - 4px); color: var(--red); cursor: pointer; background: transparent; border: none; padding: 0; font-weight: 700; opacity: 0.7; transition: opacity 0.2s; }
     .chat-system { text-align: center; font-size: calc(var(--font-size) - 2.5px); color: var(--text-sub); background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; margin: 4px auto; max-width: 80%; }
+    
     .chat-input-area { border-top: 1px solid var(--border); padding: 10px 0; background: var(--bg); }
     .chat-input-row { display: flex; gap: 8px; align-items: center; }
     .chat-input { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 24px; font-family: var(--font-family); font-size: var(--font-size); outline: none; }
@@ -151,6 +183,7 @@
     .chat-btn-img { width: 42px; height: 42px; border-radius: 50%; background: var(--surface); color: var(--text); border: 1px solid var(--border); font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .2s; }
     .chat-send { width: 42px; height: 42px; border-radius: 50%; background: var(--text); color: var(--bg); border: none; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s; }
 
+    /* --- GAJI ACCORDION UI --- */
     .gaji-row { display: flex; justify-content: space-between; font-size: calc(var(--font-size) - 1px); margin-bottom: 6px; }
     .gaji-row.real { font-weight: 800; color: var(--green); margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
 
@@ -166,10 +199,18 @@
     .modal-sub   { font-size: calc(var(--font-size) - 1px); color: var(--text-sub); margin-bottom: 22px; }
     .footer { text-align: center; font-size: 11px; color: var(--text-dim); padding: 28px 0 8px; letter-spacing: 2px; text-transform: uppercase; }
 
-    @keyframes cyberBlink { 0%, 100% { color: #0ff; text-shadow: 0 0 5px #0ff, 0 0 10px #0ff; opacity: 1; } 50% { color: #f0f; text-shadow: 0 0 2px #f0f; opacity: 0.8; } }
+    /* --- TAMBAHAN EFEK CYBERPUNK & NOTIF DINAMIS --- */
+    @keyframes cyberBlink {
+      0%, 100% { color: #0ff; text-shadow: 0 0 5px #0ff, 0 0 10px #0ff; opacity: 1; }
+      50% { color: #f0f; text-shadow: 0 0 2px #f0f; opacity: 0.8; }
+    }
     .cyber-owner { animation: cyberBlink 1.5s infinite alternate !important; font-weight: 900 !important; letter-spacing: 1px; }
-    
-    .notif-popup { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    .notif-popup {
+      position: fixed; top: -100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 20px; padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
     .notif-popup.show { top: 20px; }
     .notif-icon { width: 40px; height: 40px; background: var(--bg); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
   </style>
@@ -206,7 +247,7 @@
     <div class="login-err" id="loginErr">Username atau password salah.</div>
     <div class="login-hint">
       Kontak admin untuk akses akun<br><br>
-      <span style="font-family: var(--mono); opacity: 0.5;">App Version: v8.0.0 (Web Push Ready)</span>
+      <span style="font-family: var(--mono); opacity: 0.5;">App Version: v9.0.0 (Unminified Core)</span>
     </div>
   </div>
 </div>
@@ -222,7 +263,7 @@
       </div>
     </div>
     <div class="topbar-right">
-      <button class="icon-btn" onclick="requestPushPermission()" title="Aktifkan Notifikasi" style="margin-right: 5px;">🔔</button>
+      <button class="icon-btn" onclick="requestPushPermission()" title="Aktifkan Notifikasi Web" style="margin-right: 5px;">🔔</button>
       <button class="icon-btn" onclick="openModal('logoutModal')" title="Keluar">⏏</button>
     </div>
   </div>
@@ -293,7 +334,7 @@
       </div>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v8.0.0 (Web Push Ready)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v9.0.0 (Unminified Core)</span>
       </div>
     </div>
 
@@ -321,7 +362,7 @@
       <div id="historyList"><div style="text-align:center;padding:20px;color:gray">Memuat...</div></div>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v8.0.0 (Web Push Ready)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v9.0.0 (Unminified Core)</span>
       </div>
     </div>
 
@@ -331,24 +372,24 @@
       <div id="gajiList"><div style="text-align:center;padding:20px;color:gray">Memuat Data Gaji...</div></div>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v8.0.0 (Web Push Ready)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v9.0.0 (Unminified Core)</span>
       </div>
     </div>
 
     <div class="page" id="pageSettings">
       <div class="sec-head">Pengaturan</div>
-      <div class="sec-sub">Preferensi Tampilan Aplikasi</div>
+      <div class="sec-sub">Preferensi tampilan & akun</div>
 
       <div class="settings-card">
         <div class="settings-row">
-          <div class="settings-row-label">Tema UI</div>
+          <div><div class="settings-row-label">Tema UI</div></div>
           <select id="setTheme" class="s-select" onchange="saveSettings()">
             <option value="dark">Gelap (Cyberpunk)</option>
             <option value="light">Terang</option>
           </select>
         </div>
         <div class="settings-row">
-          <div class="settings-row-label">Ukuran Teks</div>
+          <div><div class="settings-row-label">Ukuran Font</div></div>
           <select id="setFontSize" class="s-select" onchange="saveSettings()">
             <option value="12px">Kecil</option>
             <option value="14px" selected>Normal</option>
@@ -356,20 +397,24 @@
           </select>
         </div>
         <div class="settings-row">
-          <div class="settings-row-label">Gaya Font</div>
+          <div><div class="settings-row-label">Gaya Font</div></div>
           <select id="setFontFamily" class="s-select" onchange="saveSettings()">
-            <option value="'DM Sans', sans-serif">DM Sans (Modern)</option>
-            <option value="'Inter', sans-serif">Inter (Clean)</option>
-            <option value="'Roboto', sans-serif">Roboto (Klasik)</option>
-            <option value="'DM Mono', monospace">Monospace (Terminal)</option>
+            <option value="'DM Sans', -apple-system, sans-serif">DM Sans (Modern)</option>
+            <option value="'Inter', -apple-system, sans-serif">Inter (Clean)</option>
+            <option value="'Roboto', sans-serif">Roboto (Classic)</option>
+            <option value="'DM Mono', monospace">Monospace (Code)</option>
           </select>
         </div>
+      </div>
+
+      <div class="settings-card" style="margin-bottom: 20px; text-align: center; padding: 10px;">
+        <div style="font-size: 11px; color: var(--text-sub); font-family: var(--mono);">App Version: v9.0.0 (Unminified Core)</div>
       </div>
 
       <button class="btn-d" onclick="openModal('logoutModal')">Keluar Akun</button>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v8.0.0 (Web Push Ready)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v9.0.0 (Unminified Core)</span>
       </div>
     </div>
 
@@ -416,7 +461,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db_firestore = firebase.firestore();
-const messaging = firebase.messaging(); // Inisialisasi fitur Notifikasi
+const messaging = firebase.messaging(); // Inisialisasi Firebase Cloud Messaging
 
 // ==========================================
 // 2. DATA AKUN
@@ -430,23 +475,47 @@ const ACCOUNTS = {
 let currentUser = null;
 let pendingReport = null;
 let editingId = null;
-let firstLoadChat = true; let firstLoadReport = true;
+let firstLoadChat = true; 
+let firstLoadReport = true;
 
 // ==========================================
 // 3. FUNGSI UTILITAS & UI
 // ==========================================
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
+  t.textContent = msg; 
+  t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
 }
-function showLoader(txt="Memproses...") { document.getElementById('loaderText').textContent=txt; document.getElementById('loadingOverlay').style.display='flex'; }
-function hideLoader() { document.getElementById('loadingOverlay').style.display='none'; }
-function openModal(id) { document.getElementById(id).style.display='flex'; }
-function closeModal(id) { document.getElementById(id).style.display='none'; }
-function val(id) { return Number(document.getElementById(id).value) || 0; }
-function fmt(n) { return n === 0 ? '0' : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
-function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showLoader(txt="Memproses...") { 
+  document.getElementById('loaderText').textContent=txt; 
+  document.getElementById('loadingOverlay').style.display='flex'; 
+}
+
+function hideLoader() { 
+  document.getElementById('loadingOverlay').style.display='none'; 
+}
+
+function openModal(id) { 
+  document.getElementById(id).style.display='flex'; 
+}
+
+function closeModal(id) { 
+  document.getElementById(id).style.display='none'; 
+}
+
+function val(id) { 
+  return Number(document.getElementById(id).value) || 0; 
+}
+
+function fmt(n) { 
+  return n === 0 ? '0' : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); 
+}
+
+function esc(t) { 
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); 
+}
 
 function triggerNotif(title, text, icon="💬") {
   const el = document.getElementById('dynNotif');
@@ -454,6 +523,7 @@ function triggerNotif(title, text, icon="💬") {
   document.getElementById('nBody').textContent = text;
   document.getElementById('nIcon').textContent = icon;
   el.classList.add('show');
+  
   if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
   setTimeout(() => el.classList.remove('show'), 4000);
 }
@@ -476,12 +546,12 @@ function requestPushPermission() {
   Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
       showToast("Mengaktifkan Notifikasi Chrome...");
-      // GANTI STRING DI BAWAH DENGAN VAPID KEY KAMU DARI FIREBASE CONSOLE:
-      messaging.getToken({ vapidKey: 'BMhKWzZFHbErpERno5qgytnu3f-r8wDQCChtbBTsHIxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEFdRr30VQXek' })
+      // VAPID KEY ASLI DARI SCREENSHOT FIREBASE CONSOLE
+      messaging.getToken({ vapidKey: 'BMhKWzZFhBErpERno5qgytnu3f-r8wDQCChtbBTsHlxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEfDrr3OVQXek' })
       .then((currentToken) => {
         if (currentToken) {
-          console.log("Token Notif FCM:", currentToken);
-          showToast("Notifikasi Aktif! ✓");
+          console.log("Token Notif FCM Berhasil Didapat:", currentToken);
+          showToast("Notifikasi Chrome Aktif! ✓");
         } else {
           showToast("Gagal mengambil token FCM");
         }
@@ -490,14 +560,14 @@ function requestPushPermission() {
         showToast("Error Aktivasi Notif");
       });
     } else {
-      showToast("Izin notifikasi ditolak!");
+      showToast("Izin notifikasi ditolak oleh sistem!");
     }
   });
 }
 
-// Menerima notifikasi saat website sedang dibuka di layar
+// Menerima notifikasi saat website sedang dibuka
 messaging.onMessage((payload) => {
-  console.log('Pesan diterima (Foreground): ', payload);
+  console.log('Pesan FCM masuk: ', payload);
   triggerNotif(payload.notification.title, payload.notification.body, "🔔");
 });
 
@@ -508,7 +578,8 @@ function doLogin() {
   const uname = document.getElementById('loginUser').value.trim().toLowerCase();
   const pass = document.getElementById('loginPass').value;
   if (!ACCOUNTS[uname] || ACCOUNTS[uname].password !== pass) {
-    document.getElementById('loginErr').style.display = 'block'; return;
+    document.getElementById('loginErr').style.display = 'block'; 
+    return;
   }
   showLoader("Masuk ke Cloud...");
   setTimeout(() => {
@@ -522,7 +593,8 @@ function doLogin() {
 }
 
 function confirmLogout() {
-  localStorage.removeItem('session_v6'); window.location.reload();
+  localStorage.removeItem('session_v6'); 
+  window.location.reload();
 }
 
 const savedSession = localStorage.getItem('session_v6');
@@ -535,16 +607,19 @@ if (savedSession && ACCOUNTS[savedSession]) {
 
 function initApp() {
   document.getElementById('topAvatar').childNodes[0].textContent = currentUser.displayName.charAt(0);
+  
   const topNameEl = document.getElementById('topName');
   topNameEl.textContent = currentUser.displayName;
   if (currentUser.role === 'owner') topNameEl.classList.add('cyber-owner');
+
   document.getElementById('topRole').textContent = currentUser.role === 'owner' ? `ID: ${currentUser.id} · Akses Penuh` : `ID: ${currentUser.id} · Penjual`;
   
   document.getElementById('tanggal').value = formatTanggalCantik(new Date());
 
+  // Load Settings Dynamic CSS Variables
   const theme = localStorage.getItem('app_theme') || 'dark';
   const fSize = localStorage.getItem('app_fsize') || '14px';
-  const fFam = localStorage.getItem('app_ffam') || "'DM Sans', sans-serif";
+  const fFam = localStorage.getItem('app_ffam') || "'DM Sans', -apple-system, sans-serif";
   
   document.documentElement.setAttribute('data-theme', theme);
   document.documentElement.style.setProperty('--font-size', fSize);
@@ -561,9 +636,12 @@ function initApp() {
   listenReports(); 
   listenGaji();
 
-  // Minta izin notifikasi Chrome otomatis setelah login
-  if ('Notification' in window && Notification.permission !== 'granted') {
-    setTimeout(requestPushPermission, 2000);
+  // Minta izin notifikasi otomatis setelah login untuk Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('firebase-messaging-sw.js').then((reg) => {
+      console.log('Service Worker Terdaftar');
+      messaging.useServiceWorker(reg);
+    });
   }
 }
 
@@ -579,7 +657,8 @@ function saveSettings() {
   document.documentElement.setAttribute('data-theme', theme);
   document.documentElement.style.setProperty('--font-size', fSize);
   document.documentElement.style.setProperty('--font-family', fFam);
-  showToast('Pengaturan disimpan ✓');
+  
+  showToast('Pengaturan berhasil disimpan ✓');
 }
 
 function buildTabBar() {
@@ -592,7 +671,10 @@ function buildTabBar() {
   ];
   let html = '';
   tabs.forEach(t => {
-    html += `<div class="tab-item" id="tab_${t.id}" onclick="switchPage('${t.id}')"><span class="ti">${t.icon}</span><span>${t.label}</span></div>`;
+    html += `
+      <div class="tab-item" id="tab_${t.id}" onclick="switchPage('${t.id}')">
+        <span class="ti">${t.icon}</span><span>${t.label}</span>
+      </div>`;
   });
   document.getElementById('tabBar').innerHTML = html;
   document.getElementById('tab_pageLaporan').classList.add('active');
@@ -614,11 +696,12 @@ function switchPage(pid) {
 // ==========================================
 function startProcess() {
   const captcha = document.getElementById('captchaCheck');
-  if (!captcha.checked) return showToast('Centang konfirmasi data!');
-  showLoader("Menghitung...");
+  if (!captcha.checked) return showToast('Centang konfirmasi data terlebih dahulu!');
+  showLoader("Menghitung Data...");
   
   setTimeout(() => {
     hideLoader();
+    
     const sa={pb:val('sa_pb'),pbk:val('sa_pbk'),pk:val('sa_pk'),pks:val('sa_pks'),pt:val('sa_pt'),th:val('sa_th')};
     const sk={pb:val('sk_pb'),pbk:val('sk_pbk'),pk:val('sk_pk'),pks:val('sk_pks'),pt:val('sk_pt'),th:val('sk_th')};
     const ssk={pb:sk.pb*75000,pbk:sk.pbk*30000,pk:sk.pk*25000,pks:sk.pks*62500,pt:sk.pt*75000,th:sk.th*62500};
@@ -636,17 +719,23 @@ function startProcess() {
 
     let t = `PENTOL JAYA GRESIK\nTanggal : ${document.getElementById('tanggal').value}\nKasir   : ${currentUser.displayName}\nID      : ${currentUser.id}\n\n`;
     t += `Stok awal :\nPB : ${sa.pb||'0'}\nPBK : ${sa.pbk||'0'}\nPK : ${sa.pk||'0'}\nPKS : ${sa.pks||'0'}\nPT : ${sa.pt||'0'}\nTH : ${sa.th||'0'}\n\n`;
-    t += `Stok keluar :\nPB : ${sk.pb||'0'} x 75.000 = ${fmt(ssk.pb)}\nPBK : ${sk.pbk||'0'} x 30.000 = ${fmt(ssk.pbk)}\nPK : ${sk.pk||'0'} x 25.000 = ${fmt(ssk.pk)}\nPKS : ${sk.pks||'0'} x 62.500 = ${fmt(ssk.pks)}\nPT  : ${sk.pt||'0'} x 75.000 = ${fmt(ssk.pt)}\nTH : ${sk.th||'0'} x 62.500 = ${fmt(ssk.th)}\n\nTotal keluar = ${fmt(totSk)}\n\n`;
+    t += `Stok keluar :\nPB : ${sk.pb||'0'} x 75.000 = ${fmt(ssk.pb)}\nPBK : ${sk.pbk||'0'} x 30.000 = ${fmt(ssk.pbk)}\nPK : ${sk.pk||'0'} x 25.000 = ${fmt(ssk.pk)}\nPKS : ${sk.pks||'0'} x 62.500 = ${fmt(ssk.pks)}\nPT  : ${sk.pt||'0'} x 75.000 = ${fmt(ssk.pt)}\nTH : ${sk.th||'0'} x 62.500 = ${fmt(ssk.th)}\n\nTotal stok keluar = ${fmt(totSk)}\n\n`;
     t += `Pengeluaran :\n${rincian}\n\nTotal = ${fmt(pgl)}\n\nOmset = ${fmt(oms)}\n\n`;
     t += `Sisa dandang :\nPB : ${sd.pb||'0'} x 3.000 = ${fmt(ssd.pb)}\nPK : ${sd.pk||'0'} x 500 = ${fmt(ssd.pk)}\nPT : ${sd.pt||'0'} x 1.500 = ${fmt(ssd.pt)}\nTH : ${sd.th||'0'} x 500 = ${fmt(ssd.th)}\n\nTotal = ${fmt(totSd)}\n\n`;
-    t += `A : ${fmt(totSk)} + ${fmt(kmrn)} = ${fmt(A)}\nB : ${fmt(oms)} + ${fmt(pgl)} + ${fmt(totSd)} = ${fmt(B)}\n\nHasil = ${sel>=0?'+':'-'} ( ${fmt(Math.abs(sel))} )\n\n`;
-    t += `Sisa Stok :\nPB: ${ss.pb} | PBK: ${ss.pbk} | PK: ${ss.pk} | PKS: ${ss.pks} | TH: ${ss.th}`;
+    t += `A : ${fmt(totSk)} + ${fmt(kmrn)} = ${fmt(A)}\nB : ${fmt(oms)} + ${fmt(pgl)} + ${fmt(totSd)} = ${fmt(B)}\n\nHasil = B - A = ${fmt(B)} - ${fmt(A)} = ${sel>=0?'+':'-'} ( ${fmt(Math.abs(sel))} )\n\n`;
+    t += `Sisa Stok :\nPB : ${ss.pb||'0'}\nPBK : ${ss.pbk||'0'}\nPK : ${ss.pk||'0'}\nPKS : ${ss.pks||'0'}\nTH : ${ss.th||'0'}`;
 
     document.getElementById('output').textContent = t;
     document.getElementById('result_container').style.display = 'block';
     
-    pendingReport = { id: Date.now().toString(), tanggal: document.getElementById('tanggal').value, konten: t, sender: currentUser.displayName, time: Date.now() };
-    
+    pendingReport = {
+      id: Date.now().toString(),
+      tanggal: document.getElementById('tanggal').value,
+      konten: t,
+      sender: currentUser.displayName,
+      time: Date.now()
+    };
+
     if(currentUser.role === 'owner') {
       document.getElementById('confirmBanner').style.display = 'none';
       kirimLaporan(); 
@@ -656,7 +745,9 @@ function startProcess() {
   }, 800);
 }
 
-function batalKirim() { document.getElementById('result_container').style.display = 'none'; }
+function batalKirim() { 
+  document.getElementById('result_container').style.display = 'none'; 
+}
 
 function extractKasbon(teks) {
   let potongan = 0;
@@ -664,6 +755,7 @@ function extractKasbon(teks) {
   baris.forEach(b => {
     if(b.includes(':')) {
        const bLower = b.toLowerCase();
+       // Deteksi kata kunci ambil gaji
        if(bLower.includes('kasbon') || bLower.includes('gaji') || bLower.includes('ambil') || 
           bLower.includes(currentUser.displayName.toLowerCase()) || 
           bLower.includes('feri') || bLower.includes('anomali')) {
@@ -677,10 +769,11 @@ function extractKasbon(teks) {
 
 function kirimLaporan() {
   if(!pendingReport) return;
-  showLoader("Mengirim Cloud...");
+  showLoader("Mengirim Laporan ke Cloud...");
   
   db_firestore.collection("laporan").doc(pendingReport.id).set(pendingReport)
   .then(() => {
+    // Proses Potong Kasbon Gaji Otomatis
     const teksPengeluaran = document.getElementById('rincian_pengeluaran').value;
     const jumlahKasbon = extractKasbon(teksPengeluaran);
     
@@ -689,42 +782,106 @@ function kirimLaporan() {
        const docIdGaji = `${currentUser.username}_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
        
        db_firestore.collection("gaji").doc(docIdGaji).get().then(doc => {
-           let gp = 0; let tglS = formatTanggalCantik(d); let jamS = "Belum Absen";
-           if(doc.exists) { gp = doc.data().gajiPokok || 0; tglS = doc.data().tglStr; jamS = doc.data().jamStr; }
+           let gp = 0; 
+           let tglS = formatTanggalCantik(d); 
+           let jamS = "Belum Absen";
+           
+           if(doc.exists) { 
+               gp = doc.data().gajiPokok || 0; 
+               tglS = doc.data().tglStr;
+               jamS = doc.data().jamStr;
+           }
+           
            db_firestore.collection("gaji").doc(docIdGaji).set({
-               id: docIdGaji, userId: currentUser.username, nama: currentUser.displayName,
-               tglStr: tglS, jamStr: jamS, gajiPokok: gp, kasbon: jumlahKasbon, gajiReal: gp - jumlahKasbon, timestamp: Date.now()
+               id: docIdGaji, 
+               userId: currentUser.username, 
+               nama: currentUser.displayName,
+               tglStr: tglS, 
+               jamStr: jamS, 
+               gajiPokok: gp,
+               kasbon: jumlahKasbon, 
+               gajiReal: gp - jumlahKasbon, 
+               timestamp: Date.now()
            }, {merge: true});
        });
     }
 
     hideLoader();
     document.getElementById('result_container').style.display = 'none';
-    showToast("Tersimpan! ✓");
-    db_firestore.collection("chat").add({ id: Date.now(), sender: "System", text: `📋 Laporan: ${currentUser.displayName} masuk.`, isSystem: true, time: Date.now() });
-  }).catch((e) => { hideLoader(); alert("Error: " + e.message); });
+    showToast("Laporan Berhasil Tersimpan! ✓");
+    
+    db_firestore.collection("chat").add({
+      id: Date.now(), 
+      sender: "System", 
+      text: `📋 Laporan harian dari ${currentUser.displayName} telah masuk ke sistem.`,
+      isSystem: true, 
+      time: Date.now()
+    });
+    
+  }).catch((e) => { 
+    hideLoader(); 
+    alert("Error jaringan: " + e.message); 
+  });
 }
 
 function listenReports() {
   db_firestore.collection("laporan").orderBy("time", "desc").onSnapshot(snap => {
     const list = document.getElementById('historyList');
-    if (snap.empty) { list.innerHTML = '<div style="text-align:center;padding:20px;color:gray">Kosong.</div>'; return; }
+    if (snap.empty) { 
+      list.innerHTML = '<div style="text-align:center;padding:20px;color:gray">Belum ada data di Cloud.</div>'; 
+      return; 
+    }
+    
     if(!firstLoadReport && currentUser.role === 'owner') {
-      const newest = snap.docs[0].data(); triggerNotif("Laporan Baru", `Dari ${newest.sender}`, "📊");
+      const newest = snap.docs[0].data();
+      triggerNotif("Laporan Baru", `Telah masuk laporan dari ${newest.sender}`, "📊");
     }
     firstLoadReport = false;
+
     let html = '';
     snap.forEach(doc => {
       let item = doc.data();
-      const actionBtns = currentUser.role === 'owner' ? `<button class="btn-s" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation(); openEdit('${item.id}', '${item.tanggal}', \`${item.konten}\`)">Edit</button><button class="del-btn" onclick="event.stopPropagation(); db_firestore.collection('laporan').doc('${item.id}').delete()">Hapus</button>` : '';
-      html += `<div class="history-item" onclick="document.getElementById('b_${item.id}').style.display = document.getElementById('b_${item.id}').style.display === 'block' ? 'none' : 'block'"><div class="history-hd"><div><div class="history-date">${item.tanggal}</div><div class="history-meta">${item.sender}</div></div><div style="display:flex;gap:5px">${actionBtns}</div></div><div class="history-body" id="b_${item.id}">${item.konten}</div></div>`;
+      
+      const actionBtns = currentUser.role === 'owner' ? `
+        <button class="btn-s" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation(); openEdit('${item.id}', '${item.tanggal}', \`${item.konten}\`)">Edit</button>
+        <button class="del-btn" onclick="event.stopPropagation(); db_firestore.collection('laporan').doc('${item.id}').delete()">Hapus</button>
+      ` : '';
+
+      html += `
+        <div class="history-item" onclick="document.getElementById('b_${item.id}').style.display = document.getElementById('b_${item.id}').style.display === 'block' ? 'none' : 'block'">
+          <div class="history-hd">
+            <div>
+              <div class="history-date">${item.tanggal}</div>
+              <div class="history-meta">${item.sender}</div>
+            </div>
+            <div style="display:flex;gap:5px">${actionBtns}</div>
+          </div>
+          <div class="history-body" id="b_${item.id}">${item.konten}</div>
+        </div>`;
     });
     list.innerHTML = html;
   });
 }
 
-function openEdit(id, tgl, konten) { editingId = id; document.getElementById('editTgl').value = tgl; document.getElementById('editKonten').value = konten; openModal('editModal'); }
-function saveEditReport() { if(!editingId) return; showLoader("Menyimpan..."); db_firestore.collection("laporan").doc(editingId).update({ tanggal: document.getElementById('editTgl').value, konten: document.getElementById('editKonten').value }).then(() => { hideLoader(); closeModal('editModal'); showToast("Diperbarui!"); }); }
+function openEdit(id, tgl, konten) {
+  editingId = id;
+  document.getElementById('editTgl').value = tgl;
+  document.getElementById('editKonten').value = konten;
+  openModal('editModal');
+}
+
+function saveEditReport() {
+  if(!editingId) return;
+  showLoader("Menyimpan Perubahan...");
+  db_firestore.collection("laporan").doc(editingId).update({
+    tanggal: document.getElementById('editTgl').value,
+    konten: document.getElementById('editKonten').value
+  }).then(() => {
+    hideLoader(); 
+    closeModal('editModal'); 
+    showToast("Laporan Diperbarui!");
+  });
+}
 
 // ==========================================
 // 7. SISTEM CHAT & ABSEN OTOMATIS
@@ -733,21 +890,35 @@ function sendChat() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if(!text) return;
-  const msg = { id: Date.now(), sender: currentUser.username, senderName: currentUser.displayName, role: currentUser.role, text: text, time: Date.now() };
+  
+  const msg = {
+    id: Date.now(), 
+    sender: currentUser.username, 
+    senderName: currentUser.displayName,
+    role: currentUser.role, 
+    text: text, 
+    time: Date.now()
+  };
+  
   db_firestore.collection("chat").doc(msg.id.toString()).set(msg);
   input.value = '';
 }
 
 function handleImageUpload(e) {
-  const file = e.target.files[0]; if(!file) return;
-  showLoader("Upload & Absen...");
+  const file = e.target.files[0]; 
+  if(!file) return;
+  
+  showLoader("Mengunggah Bukti Absen...");
   const reader = new FileReader();
+  
   reader.onload = function(evt) {
     const img = new Image();
     img.onload = function() {
-      const cvs = document.createElement('canvas'); const maxW = 500;
+      const cvs = document.createElement('canvas'); 
+      const maxW = 500;
       let scale = img.width > maxW ? maxW / img.width : 1;
-      cvs.width = img.width * scale; cvs.height = img.height * scale;
+      cvs.width = img.width * scale; 
+      cvs.height = img.height * scale;
       cvs.getContext('2d').drawImage(img, 0, 0, cvs.width, cvs.height);
       const b64 = cvs.toDataURL('image/jpeg', 0.6);
       
@@ -755,8 +926,10 @@ function handleImageUpload(e) {
       const jamStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
       const tglCantik = formatTanggalCantik(d);
       
-      const teksAbsen = `📸 Bukti Absen Masuk\nAbsen: ${tglCantik} (${jamStr})`;
+      // Auto Teks di Chat (Tanpa menampilkan nominal Gaji)
+      const teksAbsen = `📸 Bukti Absen Masuk\nWaktu: ${tglCantik} (${jamStr})`;
 
+      // Kalkulasi Gaji Pokok untuk disimpan di Database Background
       let gp = 45000;
       if(d.getHours() <= 10) gp = 60000;
       else if(d.getHours() === 11) gp = 55000;
@@ -764,18 +937,39 @@ function handleImageUpload(e) {
 
       const docIdGaji = `${currentUser.username}_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
 
+      // Simpan Kehadiran ke Tab Gaji secara transparan
       db_firestore.collection("gaji").doc(docIdGaji).get().then(doc => {
-          let kasbonAda = 0; if(doc.exists) { kasbonAda = doc.data().kasbon || 0; }
+          let kasbonAda = 0; 
+          if(doc.exists) { 
+              kasbonAda = doc.data().kasbon || 0; 
+          }
+          
           db_firestore.collection("gaji").doc(docIdGaji).set({
-              id: docIdGaji, userId: currentUser.username, nama: currentUser.displayName,
-              tglStr: tglCantik, jamStr: jamStr, gajiPokok: gp, kasbon: kasbonAda, gajiReal: gp - kasbonAda, timestamp: Date.now()
+              id: docIdGaji, 
+              userId: currentUser.username, 
+              nama: currentUser.displayName,
+              tglStr: tglCantik, 
+              jamStr: jamStr, 
+              gajiPokok: gp,
+              kasbon: kasbonAda, 
+              gajiReal: gp - kasbonAda, 
+              timestamp: Date.now()
           }, {merge: true});
       });
 
-      db_firestore.collection("chat").doc(Date.now().toString()).set({ 
-          id: Date.now(), sender: currentUser.username, senderName: currentUser.displayName, 
-          role: currentUser.role, text: teksAbsen, image: b64, time: Date.now() 
-      }).then(hideLoader).catch(()=> { hideLoader(); alert("Gagal."); });
+      // Kirim Chat ke grup
+      db_firestore.collection("chat").doc(Date.now().toString()).set({
+        id: Date.now(), 
+        sender: currentUser.username, 
+        senderName: currentUser.displayName,
+        role: currentUser.role, 
+        text: teksAbsen, 
+        image: b64, 
+        time: Date.now()
+      }).then(hideLoader).catch(()=> { 
+        hideLoader(); 
+        alert("Upload gagal, memori mungkin penuh."); 
+      });
     }
     img.src = evt.target.result;
   }
@@ -792,34 +986,48 @@ function listenChats() {
       } else {
          const isMe = m.sender === currentUser.username;
          const isOwner = m.role === 'owner';
+         
          const timeStr = new Date(m.time).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
          const senderUI = !isMe ? `<div class="chat-sender ${isOwner ? 'cyber-owner' : ''}">${m.senderName} ${isOwner ? '(Bos)' : ''}</div>` : '';
          const imgUI = m.image ? `<img src="${m.image}" class="chat-photo">` : '';
+         
          if(!firstLoadChat && !isMe) triggerNotif(`Pesan: ${m.senderName}`, m.text);
+         
          const delBtn = isMe ? `<button class="chat-del-btn" onclick="db_firestore.collection('chat').doc('${m.id}').delete()">Hapus</button>` : '';
-         html += `<div class="chat-msg ${isMe ? 'me' : 'other'}">${senderUI}<div class="chat-bubble">${esc(m.text)}${imgUI}</div><div class="chat-time">${timeStr} ${delBtn}</div></div>`;
+         
+         html += `
+          <div class="chat-msg ${isMe ? 'me' : 'other'}">
+            ${senderUI}
+            <div class="chat-bubble">${esc(m.text)}${imgUI}</div>
+            <div class="chat-time">${timeStr} ${delBtn}</div>
+          </div>`;
       }
     });
     firstLoadChat = false;
     const box = document.getElementById('chatMessages');
-    box.innerHTML = html || '<div style="text-align:center;color:gray;padding-top:20px;">Kosong</div>';
+    box.innerHTML = html || '<div style="text-align:center;color:gray;padding-top:20px;">Belum ada pesan obrolan</div>';
     setTimeout(() => box.scrollTop = box.scrollHeight, 100);
   });
 }
 
 // ==========================================
-// 8. LISTEN DATA GAJI (ACCORDION)
+// 8. LISTEN DATA GAJI (ACCORDION UI)
 // ==========================================
 function listenGaji() {
   db_firestore.collection("gaji").orderBy("timestamp", "desc").onSnapshot(snap => {
     const list = document.getElementById('gajiList');
-    if (snap.empty) { list.innerHTML = '<div style="text-align:center;padding:20px;color:gray">Belum ada data Gaji.</div>'; return; }
+    if (snap.empty) { 
+      list.innerHTML = '<div style="text-align:center;padding:20px;color:gray">Belum ada data Gaji terekam.</div>'; 
+      return; 
+    }
     
     let html = '';
     snap.forEach(doc => {
       let g = doc.data();
+      
+      // Tombol Hapus khusus Owner untuk membersihkan data
       const actionBtns = currentUser.role === 'owner' ? `
-        <button class="del-btn" onclick="event.stopPropagation(); db_firestore.collection('gaji').doc('${g.id}').delete(); showToast('Data dihapus ✓');">Hapus</button>
+        <button class="del-btn" onclick="event.stopPropagation(); db_firestore.collection('gaji').doc('${g.id}').delete(); showToast('Data dihapus ✓');">Hapus Data</button>
       ` : '';
 
       html += `
@@ -830,15 +1038,24 @@ function listenGaji() {
               <div class="history-meta">${g.tglStr}</div>
             </div>
             <div style="display:flex;align-items:center;gap:6px">
-              <span style="font-size:12px; font-weight:700; color:var(--green)">Rp ${fmt(g.gajiReal)}</span>
+              <span style="font-size:calc(var(--font-size) - 1px); font-weight:800; color:var(--green)">Rp ${fmt(g.gajiReal)}</span>
               ${actionBtns}
             </div>
           </div>
           
-          <div class="history-body" id="gj_${g.id}" style="font-family: var(--font-family);">
-            <div class="gaji-row"><span>Gaji Pokok:</span><span>Rp ${fmt(g.gajiPokok)}</span></div>
-            <div class="gaji-row"><span style="color:var(--red)">Potongan/Kasbon:</span><span style="color:var(--red)">- Rp ${fmt(g.kasbon)}</span></div>
-            <div class="gaji-row real"><span>Gaji Real:</span><span>Rp ${fmt(g.gajiReal)}</span></div>
+          <div class="history-body" id="gj_${g.id}">
+            <div class="gaji-row">
+              <span>Gaji Pokok:</span>
+              <span>Rp ${fmt(g.gajiPokok)}</span>
+            </div>
+            <div class="gaji-row">
+              <span style="color:var(--red)">Potongan Kasbon:</span>
+              <span style="color:var(--red)">- Rp ${fmt(g.kasbon)}</span>
+            </div>
+            <div class="gaji-row real">
+              <span>Sisa Gaji (Real):</span>
+              <span>Rp ${fmt(g.gajiReal)}</span>
+            </div>
             <div style="font-size:10px; color:var(--text-dim); margin-top:10px; border-top:1px dashed var(--border); padding-top:6px; text-align:right;">
               Waktu Absen: ${g.jamStr}
             </div>
