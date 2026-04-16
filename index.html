@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Pentol Jaya — Sistem Laporan V6</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -22,16 +23,16 @@
       --text-dim:  #555;
       --accent:    #f0f0f0;
       --green:     #22c55e;
-      --green-dim: rgba(34,197,94,.12);
       --red:       #ef4444;
       --red-dim:   rgba(239,68,68,.1);
-      --amber:     #f59e0b;
-      --amber-dim: rgba(245,158,11,.12);
       --topbar-h:  58px;
       --tabbar-h:  62px;
       --r:         12px;
-      --font:      'DM Sans', -apple-system, sans-serif;
-      --mono:      'DM Mono', 'Courier New', monospace;
+      
+      /* Dinamis dari Settings */
+      --font-family: 'DM Sans', -apple-system, sans-serif;
+      --font-size:   14px;
+      --mono:        'DM Mono', 'Courier New', monospace;
     }
     [data-theme="light"] {
       --bg:      #f2f2f2;
@@ -52,8 +53,8 @@
     }
     html { scroll-behavior: smooth; }
     body {
-      font-family: var(--font);
-      font-size: 14px;
+      font-family: var(--font-family);
+      font-size: var(--font-size);
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
@@ -77,7 +78,7 @@
       left: 50%; transform: translateX(-50%) translateY(8px);
       background: var(--text); color: var(--bg);
       padding: 9px 18px; border-radius: 24px;
-      font-size: 13px; font-weight: 600;
+      font-size: calc(var(--font-size) - 1px); font-weight: 600;
       opacity: 0; transition: opacity .25s, transform .25s;
       z-index: 9998; pointer-events: none; white-space: nowrap;
     }
@@ -89,25 +90,24 @@
     .login-brand .logo-icon { font-size: 28px; margin-bottom: 12px; display: block; }
     .login-brand .logo-name { font-size: 20px; font-weight: 800; letter-spacing: .5px; color: var(--text); }
     .login-brand .logo-sub { font-size: 12px; color: var(--text-sub); margin-top: 4px; letter-spacing: .3px; }
-    .f-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 7px; }
-    .f-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; border-radius: 10px; font-family: var(--font); font-size: 15px; outline: none; transition: border-color .2s; margin-bottom: 16px; }
+    .f-label { display: block; font-size: calc(var(--font-size) - 3px); font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 7px; }
+    .f-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); outline: none; transition: border-color .2s; margin-bottom: 16px; }
     .f-input:focus { border-color: var(--text-sub); }
-    .login-btn { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 14px; border-radius: 10px; font-family: var(--font); font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px; letter-spacing: .3px; transition: opacity .2s; }
+    .login-btn { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 14px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); font-weight: 700; cursor: pointer; margin-top: 4px; transition: opacity .2s; }
     .login-btn:active { opacity: .8; }
-    .login-err { text-align: center; color: var(--red); font-size: 13px; margin-top: 12px; display: none; }
-    .login-hint { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 20px; line-height: 1.8; }
+    .login-err { text-align: center; color: var(--red); font-size: calc(var(--font-size) - 1px); margin-top: 12px; display: none; }
+    .login-hint { text-align: center; font-size: calc(var(--font-size) - 3px); color: var(--text-dim); margin-top: 20px; line-height: 1.8; }
 
     #appScreen { display: none; flex-direction: column; min-height: 100vh; }
 
     .topbar { height: var(--topbar-h); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 200; }
     .topbar-left { display: flex; align-items: center; gap: 10px; }
-    .topbar-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; position: relative; flex-shrink: 0; }
+    .topbar-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: var(--font-size); position: relative; flex-shrink: 0; }
     .topbar-avatar .odot { position: absolute; bottom: 0; right: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--green); border: 2px solid var(--surface); }
-    .topbar-name { font-weight: 700; font-size: 14px; line-height: 1.2; }
-    .topbar-role { font-size: 11px; color: var(--text-sub); }
+    .topbar-name { font-weight: 700; font-size: var(--font-size); line-height: 1.2; }
+    .topbar-role { font-size: calc(var(--font-size) - 3px); color: var(--text-sub); }
     .topbar-right { display: flex; gap: 7px; }
     .icon-btn { width: 34px; height: 34px; border-radius: 9px; background: transparent; border: 1px solid var(--border); color: var(--text-sub); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .2s; }
-    .icon-btn:hover { border-color: var(--border2); }
 
     .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: var(--tabbar-h); display: flex; background: var(--surface); border-top: 1px solid var(--border); z-index: 200; padding-bottom: env(safe-area-inset-bottom, 0); }
     .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; color: var(--text-dim); font-size: 10px; font-weight: 600; letter-spacing: .3px; transition: color .2s; position: relative; }
@@ -117,40 +117,40 @@
     .content { padding: 16px; padding-bottom: calc(var(--tabbar-h) + 16px); max-width: 600px; margin: 0 auto; }
     .page { display: none; }
     .page.active { display: block; }
-    .sec-head { font-size: 22px; font-weight: 800; letter-spacing: -.4px; margin-bottom: 3px; }
-    .sec-sub  { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; }
+    .sec-head { font-size: calc(var(--font-size) + 8px); font-weight: 800; letter-spacing: -.4px; margin-bottom: 3px; }
+    .sec-sub  { font-size: calc(var(--font-size) - 1px); color: var(--text-sub); margin-bottom: 20px; }
 
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
-    .card-title { font-size: 10.5px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+    .card-title { font-size: calc(var(--font-size) - 3px); font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
     .input-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
-    .input-row label { width: 46px; font-weight: 700; font-size: 13px; flex-shrink: 0; }
-    .input-row .hint { font-size: 11px; color: var(--text-sub); width: 68px; flex-shrink: 0; text-align: right; font-family: var(--mono); }
-    input[type="number"], input[type="text"], input[type="password"], select, textarea { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px; font-family: var(--font); font-size: 14px; outline: none; transition: border-color .2s; }
+    .input-row label { width: 46px; font-weight: 700; font-size: calc(var(--font-size) - 1px); flex-shrink: 0; }
+    .input-row .hint { font-size: calc(var(--font-size) - 3px); color: var(--text-sub); width: 68px; flex-shrink: 0; text-align: right; font-family: var(--mono); }
+    input[type="number"], input[type="text"], input[type="password"], select, textarea { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px; font-family: var(--font-family); font-size: var(--font-size); outline: none; transition: border-color .2s; }
     input:focus, select:focus, textarea:focus { border-color: var(--border2); }
     .if  { flex: 1; } .ifw { width: 100%; display: block; }
     textarea.ta { width: 100%; min-height: 68px; resize: vertical; display: block; margin-bottom: 8px; }
 
-    .btn-p { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 15px; border-radius: 10px; font-family: var(--font); font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 9px; letter-spacing: .2px; transition: opacity .15s; }
+    .btn-p { width: 100%; background: var(--text); color: var(--bg); border: none; padding: 15px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); font-weight: 700; cursor: pointer; margin-bottom: 9px; transition: opacity .15s; }
     .btn-p:active { opacity: .8; }
-    .btn-s { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 13px; border-radius: 10px; font-family: var(--font); font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 9px; transition: border-color .2s; }
+    .btn-s { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 13px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); font-weight: 600; cursor: pointer; margin-bottom: 9px; transition: border-color .2s; }
     .btn-s:hover { border-color: var(--border2); }
-    .btn-d { width: 100%; background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,.2); padding: 13px; border-radius: 10px; font-family: var(--font); font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-d { width: 100%; background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,.2); padding: 13px; border-radius: 10px; font-family: var(--font-family); font-size: var(--font-size); font-weight: 600; cursor: pointer; }
 
-    .result-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; line-height: 1.8; margin-bottom: 12px; }
+    .result-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; font-family: var(--mono); font-size: calc(var(--font-size) - 1.5px); white-space: pre-wrap; line-height: 1.8; margin-bottom: 12px; }
     #confirmBanner { display: none; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 12px; }
-    #confirmBanner .cb-title { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
-    #confirmBanner .cb-sub { font-size: 13px; color: var(--text-sub); margin-bottom: 16px; }
+    #confirmBanner .cb-title { font-size: calc(var(--font-size) + 1px); font-weight: 700; margin-bottom: 5px; }
+    #confirmBanner .cb-sub { font-size: calc(var(--font-size) - 1px); color: var(--text-sub); margin-bottom: 16px; }
 
     .captcha-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; cursor: pointer; }
     .captcha-row input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; background: var(--bg); accent-color: var(--text); }
-    .captcha-row span { font-size: 13px; }
+    .captcha-row span { font-size: calc(var(--font-size) - 1px); }
 
     .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 10px; cursor: pointer; }
     .history-hd { display: flex; justify-content: space-between; align-items: center; }
-    .history-date { font-weight: 700; font-size: 14px; }
-    .history-meta { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
-    .history-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: var(--mono); font-size: 12px; line-height: 1.75; white-space: pre-wrap; }
-    .del-btn { background: transparent; color: var(--red); border: 1px solid rgba(239,68,68,.25); padding: 4px 10px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; margin-left: 8px; }
+    .history-date { font-weight: 700; font-size: var(--font-size); }
+    .history-meta { font-size: calc(var(--font-size) - 3px); color: var(--text-sub); margin-top: 2px; }
+    .history-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-family: var(--mono); font-size: calc(var(--font-size) - 2px); line-height: 1.75; white-space: pre-wrap; }
+    .del-btn { background: transparent; color: var(--red); border: 1px solid rgba(239,68,68,.25); padding: 4px 10px; border-radius: 7px; font-size: calc(var(--font-size) - 2px); font-weight: 700; cursor: pointer; flex-shrink: 0; margin-left: 8px; }
 
     /* CHAT PAGE */
     #pageChat.active { display: flex; flex-direction: column; height: calc(100vh - var(--topbar-h) - var(--tabbar-h)); padding-bottom: 0; }
@@ -161,41 +161,48 @@
     .chat-msg { max-width: 78%; position: relative; }
     .chat-msg.me    { align-self: flex-end; }
     .chat-msg.other { align-self: flex-start; }
-    .chat-sender { font-size: 11px; color: var(--text-sub); font-weight: 700; margin-bottom: 3px; }
-    .chat-bubble { padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.5; word-break: break-word; }
+    .chat-sender { font-size: calc(var(--font-size) - 3px); color: var(--text-sub); font-weight: 700; margin-bottom: 3px; }
+    .chat-bubble { padding: 10px 14px; border-radius: 16px; font-size: calc(var(--font-size) - 0.5px); line-height: 1.5; word-break: break-word; }
     .chat-msg.me .chat-bubble { background: var(--text); color: var(--bg); border-bottom-right-radius: 4px; }
     .chat-msg.other .chat-bubble { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
     .chat-photo { max-width: 100%; border-radius: 8px; margin-top: 5px; display: block; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-    .chat-time { font-size: 10px; color: var(--text-dim); margin-top: 3px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+    .chat-time { font-size: calc(var(--font-size) - 4px); color: var(--text-dim); margin-top: 3px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
     .chat-msg.other .chat-time { justify-content: flex-start; }
-    .chat-del-btn { font-size: 10px; color: var(--red); cursor: pointer; background: transparent; border: none; padding: 0; font-weight: 700; opacity: 0.7; transition: opacity 0.2s; }
-    .chat-system { text-align: center; font-size: 11.5px; color: var(--text-sub); background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; margin: 4px auto; max-width: 80%; }
+    .chat-del-btn { font-size: calc(var(--font-size) - 4px); color: var(--red); cursor: pointer; background: transparent; border: none; padding: 0; font-weight: 700; opacity: 0.7; transition: opacity 0.2s; }
+    .chat-system { text-align: center; font-size: calc(var(--font-size) - 2.5px); color: var(--text-sub); background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; margin: 4px auto; max-width: 80%; }
     .chat-input-area { border-top: 1px solid var(--border); padding: 10px 0; background: var(--bg); }
     .chat-input-row { display: flex; gap: 8px; align-items: center; }
-    .chat-input { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 24px; font-family: var(--font); font-size: 14px; outline: none; }
+    .chat-input { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 24px; font-family: var(--font-family); font-size: var(--font-size); outline: none; }
     .chat-input:focus { border-color: var(--border2); }
     .chat-btn-img { width: 42px; height: 42px; border-radius: 50%; background: var(--surface); color: var(--text); border: 1px solid var(--border); font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .2s; }
     .chat-send { width: 42px; height: 42px; border-radius: 50%; background: var(--text); color: var(--bg); border: none; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s; }
 
+    /* GAJI CARDS */
+    .gaji-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .gaji-head { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border); padding-bottom: 8px; margin-bottom: 4px; }
+    .gaji-name { font-weight: 800; font-size: var(--font-size); color: var(--text); }
+    .gaji-tgl { font-size: calc(var(--font-size) - 3px); color: var(--text-sub); text-align: right; }
+    .gaji-row { display: flex; justify-content: space-between; font-size: calc(var(--font-size) - 1px); }
+    .gaji-row.real { font-weight: 800; color: var(--green); margin-top: 4px; border-top: 1px solid var(--border); padding-top: 8px; }
+
     .settings-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 12px; }
     .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); }
     .settings-row:last-child { border-bottom: none; }
-    .settings-row-label { font-weight: 600; font-size: 14px; }
-    .s-select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: 8px; font-family: var(--font); font-size: 13px; outline: none; }
+    .settings-row-label { font-weight: 600; font-size: var(--font-size); }
+    .s-select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: 8px; font-family: var(--font-family); font-size: calc(var(--font-size) - 1px); outline: none; }
 
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); display: none; justify-content: center; align-items: center; z-index: 500; padding: 24px; }
     .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 26px 24px; width: 100%; max-width: 340px; text-align: center; }
     .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-    .modal-sub   { font-size: 13px; color: var(--text-sub); margin-bottom: 22px; }
+    .modal-sub   { font-size: calc(var(--font-size) - 1px); color: var(--text-sub); margin-bottom: 22px; }
     .footer { text-align: center; font-size: 11px; color: var(--text-dim); padding: 28px 0 8px; letter-spacing: 2px; text-transform: uppercase; }
 
-    /* --- TAMBAHAN EFEK CYBERPUNK & NOTIF DINAMIS --- */
     @keyframes cyberBlink {
       0%, 100% { color: #0ff; text-shadow: 0 0 5px #0ff, 0 0 10px #0ff; opacity: 1; }
       50% { color: #f0f; text-shadow: 0 0 2px #f0f; opacity: 0.8; }
     }
     .cyber-owner { animation: cyberBlink 1.5s infinite alternate !important; font-weight: 900 !important; letter-spacing: 1px; }
-
+    
     .notif-popup {
       position: fixed; top: -100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--surface2);
       border: 1px solid var(--border); border-radius: 20px; padding: 12px 16px; display: flex; align-items: center; gap: 12px;
@@ -237,7 +244,7 @@
     <div class="login-err" id="loginErr">Username atau password salah.</div>
     <div class="login-hint">
       Kontak admin untuk akses akun<br><br>
-      <span style="font-family: var(--mono); opacity: 0.5;">App Version: v6.7.0 (Ultimate Cloud)</span>
+      <span style="font-family: var(--mono); opacity: 0.5;">App Version: v7.0.0 (Gaji Auto Update)</span>
     </div>
   </div>
 </div>
@@ -290,7 +297,7 @@
 
       <div class="card">
         <div class="card-title">Keuangan</div>
-        <textarea id="rincian_pengeluaran" class="ta" placeholder="Rincian Pengeluaran..."></textarea>
+        <textarea id="rincian_pengeluaran" class="ta" placeholder="Rincian Pengeluaran...&#10;(Untuk Kasbon/Ambil Gaji ketik: Nama : 40.000)"></textarea>
         <div class="input-row"><label style="width:130px;flex-shrink:0;font-size:12px">Tot Pengeluaran</label><input type="number" class="if" id="total_pengeluaran" value="0"></div>
         <div class="input-row"><label style="width:130px;flex-shrink:0;font-size:12px">Omset</label><input type="number" class="if" id="omset" value="0"></div>
         <div class="input-row"><label style="width:130px;flex-shrink:0;font-size:12px">Sisa Dandang KMRN</label><input type="number" class="if" id="sd_kemarin" value="0"></div>
@@ -323,14 +330,14 @@
       </div>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v6.7.0 (Ultimate Cloud)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.0.0 (Gaji Auto Update)</span>
       </div>
     </div>
 
     <div class="page" id="pageChat">
       <div class="chat-header">
         <div class="sec-head">Grup Chat</div>
-        <div class="sec-sub">Pentol Jaya Gresik</div>
+        <div class="sec-sub">Kirim Foto untuk Absen Otomatis</div>
       </div>
       <div class="chat-messages" id="chatMessages">
         <div style="text-align:center;padding:20px;color:gray">Memuat Chat...</div>
@@ -351,34 +358,55 @@
       <div id="historyList"><div style="text-align:center;padding:20px;color:gray">Memuat...</div></div>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v6.7.0 (Ultimate Cloud)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.0.0 (Gaji Auto Update)</span>
+      </div>
+    </div>
+
+    <div class="page" id="pageGaji">
+      <div class="sec-head">Data Gaji Real</div>
+      <div class="sec-sub">Rekap Gaji & Kasbon Otomatis Penjual</div>
+      <div id="gajiList"><div style="text-align:center;padding:20px;color:gray">Memuat Data Gaji...</div></div>
+      <div class="footer">
+        BY | @ManDev Official<br>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.0.0 (Gaji Auto Update)</span>
       </div>
     </div>
 
     <div class="page" id="pageSettings">
       <div class="sec-head">Pengaturan</div>
-      <div class="sec-sub">Preferensi tampilan & akun</div>
+      <div class="sec-sub">Preferensi Tampilan Aplikasi</div>
 
       <div class="settings-card">
         <div class="settings-row">
-          <div>
-            <div class="settings-row-label">Tema UI</div>
-          </div>
+          <div class="settings-row-label">Tema UI</div>
           <select id="setTheme" class="s-select" onchange="saveSettings()">
             <option value="dark">Gelap (Cyberpunk)</option>
             <option value="light">Terang</option>
           </select>
         </div>
-      </div>
-
-      <div class="settings-card" style="margin-bottom: 20px; text-align: center; padding: 10px;">
-        <div style="font-size: 11px; color: var(--text-sub); font-family: var(--mono);">App Version: v6.7.0 (Ultimate Cloud)</div>
+        <div class="settings-row">
+          <div class="settings-row-label">Ukuran Teks</div>
+          <select id="setFontSize" class="s-select" onchange="saveSettings()">
+            <option value="12px">Kecil</option>
+            <option value="14px" selected>Normal</option>
+            <option value="16px">Besar</option>
+          </select>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-label">Gaya Font</div>
+          <select id="setFontFamily" class="s-select" onchange="saveSettings()">
+            <option value="'DM Sans', sans-serif">DM Sans (Modern)</option>
+            <option value="'Inter', sans-serif">Inter (Clean)</option>
+            <option value="'Roboto', sans-serif">Roboto (Klasik)</option>
+            <option value="'DM Mono', monospace">Monospace (Terminal)</option>
+          </select>
+        </div>
       </div>
 
       <button class="btn-d" onclick="openModal('logoutModal')">Keluar Akun</button>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v6.7.0 (Ultimate Cloud)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.0.0 (Gaji Auto Update)</span>
       </div>
     </div>
 
@@ -432,13 +460,13 @@ const db_firestore = firebase.firestore();
 const ACCOUNTS = {
   'owner': { password: 'ownerfais', role: 'owner', displayName: 'Bos Owner', id: 'OWN-001' },
   'penjual1': { password: '12345', role: 'penjual', displayName: 'Anomali', id: 'PJG-001' },
-  'penjual2': { password: '12345', role: 'penjual', displayName: 'Penjual Dua', id: 'PJG-002' }
+  'penjual2': { password: '12345', role: 'penjual', displayName: 'Feri', id: 'PJG-002' }
 };
 
 let currentUser = null;
 let pendingReport = null;
 let editingId = null;
-let firstLoadChat = true; let firstLoadReport = true;
+let firstLoadChat = true; let firstLoadReport = true; let firstLoadGaji = true;
 
 // ==========================================
 // 3. FUNGSI UTILITAS & UI
@@ -463,12 +491,19 @@ function triggerNotif(title, text, icon="💬") {
   document.getElementById('nIcon').textContent = icon;
   el.classList.add('show');
   if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-  if (document.hidden && Notification.permission === "granted") new Notification(title, {body: text});
+  if (window.AndroidNotif) window.AndroidNotif.kirimNotif(title, text);
   setTimeout(() => el.classList.remove('show'), 4000);
 }
 
+// Bantuan Format Tanggal Cantik (e.g Kamis, 16 April 2026)
+function formatTanggalCantik(d) {
+  const hariArr = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const blnArr = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  return `${hariArr[d.getDay()]}, ${d.getDate()} ${blnArr[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 // ==========================================
-// 4. LOGIN & LOGOUT
+// 4. LOGIN & LOGOUT & SETTINGS
 // ==========================================
 function doLogin() {
   const uname = document.getElementById('loginUser').value.trim().toLowerCase();
@@ -501,29 +536,47 @@ if (savedSession && ACCOUNTS[savedSession]) {
 
 function initApp() {
   document.getElementById('topAvatar').childNodes[0].textContent = currentUser.displayName.charAt(0);
-  
   const topNameEl = document.getElementById('topName');
   topNameEl.textContent = currentUser.displayName;
   if (currentUser.role === 'owner') topNameEl.classList.add('cyber-owner');
-
   document.getElementById('topRole').textContent = currentUser.role === 'owner' ? `ID: ${currentUser.id} · Akses Penuh` : `ID: ${currentUser.id} · Penjual`;
   
-  const d = new Date();
-  const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  const bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-  document.getElementById('tanggal').value = `${hari[d.getDay()]} ${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
+  document.getElementById('tanggal').value = formatTanggalCantik(new Date());
 
-  if ("Notification" in window) Notification.requestPermission();
+  // Load Settings
+  const theme = localStorage.getItem('app_theme') || 'dark';
+  const fSize = localStorage.getItem('app_fsize') || '14px';
+  const fFam = localStorage.getItem('app_ffam') || "'DM Sans', sans-serif";
+  
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.style.setProperty('--font-size', fSize);
+  document.documentElement.style.setProperty('--font-family', fFam);
+  
+  document.getElementById('setTheme').value = theme;
+  document.getElementById('setFontSize').value = fSize;
+  document.getElementById('setFontFamily').value = fFam;
 
   buildTabBar();
   switchPage('pageLaporan');
   
-  const theme = localStorage.getItem('app_theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', theme);
-  document.getElementById('setTheme').value = theme;
-
   listenChats();
   listenReports(); 
+  listenGaji();
+}
+
+function saveSettings() {
+  const theme = document.getElementById('setTheme').value;
+  const fSize = document.getElementById('setFontSize').value;
+  const fFam = document.getElementById('setFontFamily').value;
+  
+  localStorage.setItem('app_theme', theme);
+  localStorage.setItem('app_fsize', fSize);
+  localStorage.setItem('app_ffam', fFam);
+  
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.style.setProperty('--font-size', fSize);
+  document.documentElement.style.setProperty('--font-family', fFam);
+  showToast('Pengaturan disimpan ✓');
 }
 
 function buildTabBar() {
@@ -531,14 +584,12 @@ function buildTabBar() {
     { id: 'pageLaporan', icon: '📋', label: 'Laporan' },
     { id: 'pageChat', icon: '💬', label: 'Chat' },
     { id: 'pageDatabase', icon: '🗂', label: 'Database' },
+    { id: 'pageGaji', icon: '💸', label: 'Gaji' },
     { id: 'pageSettings', icon: '⚙', label: 'Settings' }
   ];
   let html = '';
   tabs.forEach(t => {
-    html += `
-      <div class="tab-item" id="tab_${t.id}" onclick="switchPage('${t.id}')">
-        <span class="ti">${t.icon}</span><span>${t.label}</span>
-      </div>`;
+    html += `<div class="tab-item" id="tab_${t.id}" onclick="switchPage('${t.id}')"><span class="ti">${t.icon}</span><span>${t.label}</span></div>`;
   });
   document.getElementById('tabBar').innerHTML = html;
   document.getElementById('tab_pageLaporan').classList.add('active');
@@ -555,15 +606,8 @@ function switchPage(pid) {
   }
 }
 
-function saveSettings() {
-  const theme = document.getElementById('setTheme').value;
-  localStorage.setItem('app_theme', theme);
-  document.documentElement.setAttribute('data-theme', theme);
-  showToast('Pengaturan disimpan ✓');
-}
-
 // ==========================================
-// 5. SISTEM LAPORAN (TanPA PBK di Dandang)
+// 5. SISTEM LAPORAN & HITUNG KASBON GAJI
 // ==========================================
 function startProcess() {
   const captcha = document.getElementById('captchaCheck');
@@ -572,13 +616,11 @@ function startProcess() {
   
   setTimeout(() => {
     hideLoader();
-    
     const sa={pb:val('sa_pb'),pbk:val('sa_pbk'),pk:val('sa_pk'),pks:val('sa_pks'),pt:val('sa_pt'),th:val('sa_th')};
     const sk={pb:val('sk_pb'),pbk:val('sk_pbk'),pk:val('sk_pk'),pks:val('sk_pks'),pt:val('sk_pt'),th:val('sk_th')};
     const ssk={pb:sk.pb*75000,pbk:sk.pbk*30000,pk:sk.pk*25000,pks:sk.pks*62500,pt:sk.pt*75000,th:sk.th*62500};
     const totSk = ssk.pb+ssk.pbk+ssk.pk+ssk.pks+ssk.pt+ssk.th;
     
-    // SISA DANDANG TANPA PBK
     const sd={pb:val('sd_pb'),pk:val('sd_pk'),pt:val('sd_pt'),th:val('sd_th')};
     const ssd={pb:sd.pb*3000,pk:sd.pk*500,pt:sd.pt*1500,th:sd.th*500};
     const totSd = ssd.pb+ssd.pk+ssd.pt+ssd.th;
@@ -587,28 +629,21 @@ function startProcess() {
     const rincian = document.getElementById('rincian_pengeluaran').value || '-';
     const A = totSk + kmrn; const B = oms + pgl + totSd; const sel = B - A;
     
-    // PENAMBAHAN PBK DI SISA STOK
     const ss = { pb:sa.pb-sk.pb, pbk:sa.pbk-sk.pbk, pk:sa.pk-sk.pk, pks:sa.pks-sk.pks, pt:sa.pt-sk.pt, th:sa.th-sk.th };
 
     let t = `PENTOL JAYA GRESIK\nTanggal : ${document.getElementById('tanggal').value}\nKasir   : ${currentUser.displayName}\nID      : ${currentUser.id}\n\n`;
-    t += `Stok awal :\nPB : ${sa.pb||''}\nPBK : ${sa.pbk||''}\nPK : ${sa.pk||''}\nPKS : ${sa.pks||''}\nPT : ${sa.pt||''}\nTH : ${sa.th||''}\n\n`;
-    t += `Stok keluar :\nPB : ${sk.pb||''} x 75.000 = ${fmt(ssk.pb)}\nPBK : ${sk.pbk||''} x 30.000 = ${fmt(ssk.pbk)}\nPK : ${sk.pk||''} x 25.000 = ${fmt(ssk.pk)}\nPKS : ${sk.pks||''} x 62.500 = ${fmt(ssk.pks)}\nPT  : ${sk.pt||''} x 75.000 = ${fmt(ssk.pt)}\nTH : ${sk.th||''} x 62.500 = ${fmt(ssk.th)}\n\nTotal stok keluar = ${fmt(totSk)}\n\n`;
+    t += `Stok awal :\nPB : ${sa.pb||'0'}\nPBK : ${sa.pbk||'0'}\nPK : ${sa.pk||'0'}\nPKS : ${sa.pks||'0'}\nPT : ${sa.pt||'0'}\nTH : ${sa.th||'0'}\n\n`;
+    t += `Stok keluar :\nPB : ${sk.pb||'0'} x 75.000 = ${fmt(ssk.pb)}\nPBK : ${sk.pbk||'0'} x 30.000 = ${fmt(ssk.pbk)}\nPK : ${sk.pk||'0'} x 25.000 = ${fmt(ssk.pk)}\nPKS : ${sk.pks||'0'} x 62.500 = ${fmt(ssk.pks)}\nPT  : ${sk.pt||'0'} x 75.000 = ${fmt(ssk.pt)}\nTH : ${sk.th||'0'} x 62.500 = ${fmt(ssk.th)}\n\nTotal keluar = ${fmt(totSk)}\n\n`;
     t += `Pengeluaran :\n${rincian}\n\nTotal = ${fmt(pgl)}\n\nOmset = ${fmt(oms)}\n\n`;
-    t += `Sisa dandang :\nPB : ${sd.pb||''} x 3.000 = ${fmt(ssd.pb)}\nPK : ${sd.pk||''} x 500 = ${fmt(ssd.pk)}\nPT : ${sd.pt||''} x 1.500 = ${fmt(ssd.pt)}\nTH : ${sd.th||''} x 500 = ${fmt(ssd.th)}\n\nTotal = ${fmt(totSd)}\n\n`;
-    t += `A : ${fmt(totSk)} + ${fmt(kmrn)} = ${fmt(A)}\nB : ${fmt(oms)} + ${fmt(pgl)} + ${fmt(totSd)} = ${fmt(B)}\n\nHasil = B - A = ${fmt(B)} - ${fmt(A)} = ${sel>=0?'+':'-'} ( ${fmt(Math.abs(sel))} )\n\n`;
-    t += `Sisa Stok :\nPB : ${ss.pb||''}\nPBK : ${ss.pbk||''}\nPK : ${ss.pk||''}\nPKS : ${ss.pks||''}\nTH : ${ss.th||''}`;
+    t += `Sisa dandang :\nPB : ${sd.pb||'0'} x 3.000 = ${fmt(ssd.pb)}\nPK : ${sd.pk||'0'} x 500 = ${fmt(ssd.pk)}\nPT : ${sd.pt||'0'} x 1.500 = ${fmt(ssd.pt)}\nTH : ${sd.th||'0'} x 500 = ${fmt(ssd.th)}\n\nTotal = ${fmt(totSd)}\n\n`;
+    t += `A : ${fmt(totSk)} + ${fmt(kmrn)} = ${fmt(A)}\nB : ${fmt(oms)} + ${fmt(pgl)} + ${fmt(totSd)} = ${fmt(B)}\n\nHasil = ${sel>=0?'+':'-'} ( ${fmt(Math.abs(sel))} )\n\n`;
+    t += `Sisa Stok :\nPB: ${ss.pb} | PBK: ${ss.pbk} | PK: ${ss.pk} | PKS: ${ss.pks} | TH: ${ss.th}`;
 
     document.getElementById('output').textContent = t;
     document.getElementById('result_container').style.display = 'block';
     
-    pendingReport = {
-      id: Date.now().toString(),
-      tanggal: document.getElementById('tanggal').value,
-      konten: t,
-      sender: currentUser.displayName,
-      time: Date.now()
-    };
-
+    pendingReport = { id: Date.now().toString(), tanggal: document.getElementById('tanggal').value, konten: t, sender: currentUser.displayName, time: Date.now() };
+    
     if(currentUser.role === 'owner') {
       document.getElementById('confirmBanner').style.display = 'none';
       kirimLaporan(); 
@@ -620,91 +655,98 @@ function startProcess() {
 
 function batalKirim() { document.getElementById('result_container').style.display = 'none'; }
 
+function extractKasbon(teks) {
+  let potongan = 0;
+  const baris = teks.split('\n');
+  baris.forEach(b => {
+    if(b.includes(':')) {
+       const bLower = b.toLowerCase();
+       // Hanya cek baris yang bukan bahan baku (contoh: cari nama, kasbon, ambil, gaji)
+       if(bLower.includes('kasbon') || bLower.includes('gaji') || bLower.includes('ambil') || 
+          bLower.includes(currentUser.displayName.toLowerCase()) || 
+          bLower.includes('feri') || bLower.includes('anomali')) {
+             const m = b.match(/:\s*([\d\.]+)/);
+             if(m) potongan += parseInt(m[1].replace(/\./g, ''));
+       }
+    }
+  });
+  return potongan;
+}
+
 function kirimLaporan() {
   if(!pendingReport) return;
-  showLoader("Mengirim ke Cloud...");
+  showLoader("Mengirim Cloud...");
+  
   db_firestore.collection("laporan").doc(pendingReport.id).set(pendingReport)
   .then(() => {
+    // === PROSES KASBON KE SISTEM GAJI ===
+    const teksPengeluaran = document.getElementById('rincian_pengeluaran').value;
+    const jumlahKasbon = extractKasbon(teksPengeluaran);
+    
+    if(jumlahKasbon > 0) {
+       const d = new Date();
+       const docIdGaji = `${currentUser.username}_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
+       
+       db_firestore.collection("gaji").doc(docIdGaji).get().then(doc => {
+           let gp = 0; let tglS = formatTanggalCantik(d); let jamS = "Belum Absen";
+           if(doc.exists) { 
+               gp = doc.data().gajiPokok || 0; 
+               tglS = doc.data().tglStr;
+               jamS = doc.data().jamStr;
+           }
+           
+           db_firestore.collection("gaji").doc(docIdGaji).set({
+               id: docIdGaji, userId: currentUser.username, nama: currentUser.displayName,
+               tglStr: tglS, jamStr: jamS, gajiPokok: gp,
+               kasbon: jumlahKasbon, gajiReal: gp - jumlahKasbon, timestamp: Date.now()
+           }, {merge: true});
+       });
+    }
+
     hideLoader();
     document.getElementById('result_container').style.display = 'none';
-    showToast("Laporan Berhasil Tersimpan! ✓");
+    showToast("Tersimpan! ✓");
+    db_firestore.collection("chat").add({ id: Date.now(), sender: "System", text: `📋 Laporan: ${currentUser.displayName} masuk.`, isSystem: true, time: Date.now() });
     
-    db_firestore.collection("chat").add({
-      id: Date.now(), sender: "System", text: `📋 Laporan dari ${currentUser.displayName} telah masuk.`,
-      isSystem: true, time: Date.now()
-    });
   }).catch((e) => { hideLoader(); alert("Error: " + e.message); });
 }
 
 function listenReports() {
   db_firestore.collection("laporan").orderBy("time", "desc").onSnapshot(snap => {
     const list = document.getElementById('historyList');
-    if (snap.empty) { list.innerHTML = '<div style="text-align:center;padding:20px;color:gray">Belum ada data di Cloud.</div>'; return; }
-    
+    if (snap.empty) { list.innerHTML = '<div style="text-align:center;padding:20px;color:gray">Kosong.</div>'; return; }
     if(!firstLoadReport && currentUser.role === 'owner') {
-      const newest = snap.docs[0].data();
-      triggerNotif("Laporan Baru", `Dari ${newest.sender}`, "📊");
+      const newest = snap.docs[0].data(); triggerNotif("Laporan Baru", `Dari ${newest.sender}`, "📊");
     }
     firstLoadReport = false;
-
     let html = '';
     snap.forEach(doc => {
       let item = doc.data();
-      
-      const actionBtns = currentUser.role === 'owner' ? `
-        <button class="btn-s" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation(); openEdit('${item.id}', '${item.tanggal}', \`${item.konten}\`)">Edit</button>
-        <button class="del-btn" onclick="event.stopPropagation(); db_firestore.collection('laporan').doc('${item.id}').delete()">Hapus</button>
-      ` : '';
-
-      html += `
-        <div class="history-item" onclick="document.getElementById('b_${item.id}').style.display = document.getElementById('b_${item.id}').style.display === 'block' ? 'none' : 'block'">
-          <div class="history-hd">
-            <div><div class="history-date">${item.tanggal}</div><div class="history-meta">${item.sender}</div></div>
-            <div style="display:flex;gap:5px">${actionBtns}</div>
-          </div>
-          <div class="history-body" id="b_${item.id}">${item.konten}</div>
-        </div>`;
+      const actionBtns = currentUser.role === 'owner' ? `<button class="btn-s" style="padding:4px 10px;font-size:11px" onclick="event.stopPropagation(); openEdit('${item.id}', '${item.tanggal}', \`${item.konten}\`)">Edit</button><button class="del-btn" onclick="event.stopPropagation(); db_firestore.collection('laporan').doc('${item.id}').delete()">Hapus</button>` : '';
+      html += `<div class="history-item" onclick="document.getElementById('b_${item.id}').style.display = document.getElementById('b_${item.id}').style.display === 'block' ? 'none' : 'block'"><div class="history-hd"><div><div class="history-date">${item.tanggal}</div><div class="history-meta">${item.sender}</div></div><div style="display:flex;gap:5px">${actionBtns}</div></div><div class="history-body" id="b_${item.id}">${item.konten}</div></div>`;
     });
     list.innerHTML = html;
   });
 }
 
-function openEdit(id, tgl, konten) {
-  editingId = id;
-  document.getElementById('editTgl').value = tgl;
-  document.getElementById('editKonten').value = konten;
-  openModal('editModal');
-}
-
-function saveEditReport() {
-  if(!editingId) return;
-  showLoader("Menyimpan...");
-  db_firestore.collection("laporan").doc(editingId).update({
-    tanggal: document.getElementById('editTgl').value,
-    konten: document.getElementById('editKonten').value
-  }).then(() => {
-    hideLoader(); closeModal('editModal'); showToast("Laporan Diperbarui!");
-  });
-}
+function openEdit(id, tgl, konten) { editingId = id; document.getElementById('editTgl').value = tgl; document.getElementById('editKonten').value = konten; openModal('editModal'); }
+function saveEditReport() { if(!editingId) return; showLoader("Menyimpan..."); db_firestore.collection("laporan").doc(editingId).update({ tanggal: document.getElementById('editTgl').value, konten: document.getElementById('editKonten').value }).then(() => { hideLoader(); closeModal('editModal'); showToast("Diperbarui!"); }); }
 
 // ==========================================
-// 6. SISTEM CHAT & KAMERA ABSEN
+// 6. SISTEM CHAT & ABSEN OTOMATIS
 // ==========================================
 function sendChat() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if(!text) return;
-  const msg = {
-    id: Date.now(), sender: currentUser.username, senderName: currentUser.displayName,
-    role: currentUser.role, text: text, time: Date.now()
-  };
+  const msg = { id: Date.now(), sender: currentUser.username, senderName: currentUser.displayName, role: currentUser.role, text: text, time: Date.now() };
   db_firestore.collection("chat").doc(msg.id.toString()).set(msg);
   input.value = '';
 }
 
 function handleImageUpload(e) {
   const file = e.target.files[0]; if(!file) return;
-  showLoader("Upload Foto Absen...");
+  showLoader("Upload & Absen...");
   const reader = new FileReader();
   reader.onload = function(evt) {
     const img = new Image();
@@ -714,11 +756,37 @@ function handleImageUpload(e) {
       cvs.width = img.width * scale; cvs.height = img.height * scale;
       cvs.getContext('2d').drawImage(img, 0, 0, cvs.width, cvs.height);
       const b64 = cvs.toDataURL('image/jpeg', 0.6);
+      
+      const d = new Date();
+      const jamStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      const tglCantik = formatTanggalCantik(d);
+      
+      // Auto Teks di Chat (Tanpa nominal Gaji)
+      const teksAbsen = `📸 Bukti Absen Masuk\nAbsen: ${tglCantik} (${jamStr})`;
 
-      db_firestore.collection("chat").doc(Date.now().toString()).set({
-        id: Date.now(), sender: currentUser.username, senderName: currentUser.displayName,
-        role: currentUser.role, text: "📸 Bukti Absen Masuk", image: b64, time: Date.now()
-      }).then(hideLoader).catch(()=> { hideLoader(); alert("Memori Penuh / Gagal"); });
+      // Kalkulasi Gaji Pokok untuk Database Background
+      let gp = 45000;
+      if(d.getHours() <= 10) gp = 60000;
+      else if(d.getHours() === 11) gp = 55000;
+      else if(d.getHours() === 12) gp = 50000;
+
+      const docIdGaji = `${currentUser.username}_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
+
+      // Simpan Kehadiran ke Tab Gaji (Background)
+      db_firestore.collection("gaji").doc(docIdGaji).get().then(doc => {
+          let kasbonAda = 0; if(doc.exists) { kasbonAda = doc.data().kasbon || 0; }
+          db_firestore.collection("gaji").doc(docIdGaji).set({
+              id: docIdGaji, userId: currentUser.username, nama: currentUser.displayName,
+              tglStr: tglCantik, jamStr: jamStr, gajiPokok: gp,
+              kasbon: kasbonAda, gajiReal: gp - kasbonAda, timestamp: Date.now()
+          }, {merge: true});
+      });
+
+      // Kirim Chat
+      db_firestore.collection("chat").doc(Date.now().toString()).set({ 
+          id: Date.now(), sender: currentUser.username, senderName: currentUser.displayName, 
+          role: currentUser.role, text: teksAbsen, image: b64, time: Date.now() 
+      }).then(hideLoader).catch(()=> { hideLoader(); alert("Gagal."); });
     }
     img.src = evt.target.result;
   }
@@ -735,27 +803,45 @@ function listenChats() {
       } else {
          const isMe = m.sender === currentUser.username;
          const isOwner = m.role === 'owner';
-         
          const timeStr = new Date(m.time).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
          const senderUI = !isMe ? `<div class="chat-sender ${isOwner ? 'cyber-owner' : ''}">${m.senderName} ${isOwner ? '(Bos)' : ''}</div>` : '';
          const imgUI = m.image ? `<img src="${m.image}" class="chat-photo">` : '';
-         
          if(!firstLoadChat && !isMe) triggerNotif(`Pesan: ${m.senderName}`, m.text);
-         
          const delBtn = isMe ? `<button class="chat-del-btn" onclick="db_firestore.collection('chat').doc('${m.id}').delete()">Hapus</button>` : '';
-         
-         html += `
-          <div class="chat-msg ${isMe ? 'me' : 'other'}">
-            ${senderUI}
-            <div class="chat-bubble">${esc(m.text)}${imgUI}</div>
-            <div class="chat-time">${timeStr} ${delBtn}</div>
-          </div>`;
+         html += `<div class="chat-msg ${isMe ? 'me' : 'other'}">${senderUI}<div class="chat-bubble">${esc(m.text)}${imgUI}</div><div class="chat-time">${timeStr} ${delBtn}</div></div>`;
       }
     });
     firstLoadChat = false;
     const box = document.getElementById('chatMessages');
-    box.innerHTML = html || '<div style="text-align:center;color:gray;padding-top:20px;">Belum ada pesan</div>';
+    box.innerHTML = html || '<div style="text-align:center;color:gray;padding-top:20px;">Kosong</div>';
     setTimeout(() => box.scrollTop = box.scrollHeight, 100);
+  });
+}
+
+// ==========================================
+// 7. LISTEN DATA GAJI
+// ==========================================
+function listenGaji() {
+  db_firestore.collection("gaji").orderBy("timestamp", "desc").onSnapshot(snap => {
+    const list = document.getElementById('gajiList');
+    if (snap.empty) { list.innerHTML = '<div style="text-align:center;padding:20px;color:gray">Belum ada data Gaji.</div>'; return; }
+    
+    let html = '';
+    snap.forEach(doc => {
+      let g = doc.data();
+      html += `
+        <div class="gaji-card">
+          <div class="gaji-head">
+             <div class="gaji-name">${g.nama}</div>
+             <div class="gaji-tgl">${g.tglStr}<br>Absen: ${g.jamStr}</div>
+          </div>
+          <div class="gaji-row"><span>Gaji Pokok:</span><span>Rp ${fmt(g.gajiPokok)}</span></div>
+          <div class="gaji-row"><span style="color:var(--red)">Kasbon/Ambil:</span><span style="color:var(--red)">- Rp ${fmt(g.kasbon)}</span></div>
+          <div class="gaji-row real"><span>Gaji Real:</span><span>Rp ${fmt(g.gajiReal)}</span></div>
+        </div>
+      `;
+    });
+    list.innerHTML = html;
   });
 }
 </script>
