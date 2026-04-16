@@ -564,7 +564,7 @@ function requestPushPermission() {
         navigator.serviceWorker.register('./firebase-messaging-sw.js')
         .then((registration) => {
           return messaging.getToken({ 
-            vapidKey: 'BMhKWzZFhBErpERno5qgytnu3f-r8wDQCChtbBTsHIxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEfDrr3OVQXek',
+            vapidKey: 'BMhKWzZFHbErpERno5qgytnu3f-r8wDQCChtbBTsHIxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEFdRr30VQXek',
             serviceWorkerRegistration: registration 
           });
         })
