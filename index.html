@@ -545,25 +545,33 @@ function requestPushPermission() {
   
   Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
-      showToast("Mengaktifkan Notifikasi Chrome...");
-      // VAPID KEY ASLI DARI SCREENSHOT FIREBASE CONSOLE
-      messaging.getToken({ vapidKey: 'BMhKWzZFhBErpERno5qgytnu3f-r8wDQCChtbBTsHlxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEfDrr3OVQXek' })
-      .then((currentToken) => {
-        if (currentToken) {
-          console.log("Token Notif FCM Berhasil Didapat:", currentToken);
-          showToast("Notifikasi Chrome Aktif! ✓");
-        } else {
-          showToast("Gagal mengambil token FCM");
-        }
-      }).catch((err) => {
-        console.log('Error saat mengambil token', err);
-        showToast("Error Aktivasi Notif");
+      showToast("Mengaktifkan Notif Chrome...");
+      
+      // KUNCI PERBAIKAN: Kita tunggu Service Worker siap dulu, baru minta Token ke Firebase
+      navigator.serviceWorker.ready.then((registration) => {
+        messaging.getToken({ 
+          vapidKey: 'BMhKWzZFhBErpERno5qgytnu3f-r8wDQCChtbBTsHlxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEfDrr3OVQXek',
+          serviceWorkerRegistration: registration // Ini yang bikin Firebase nggak nyasar
+        })
+        .then((currentToken) => {
+          if (currentToken) {
+            console.log("Token FCM Berhasil Didapat:", currentToken);
+            showToast("Notif Chrome Aktif! ✓");
+          } else {
+            showToast("Gagal mengambil token FCM");
+          }
+        }).catch((err) => {
+          console.error('Error saat mengambil token', err);
+          showToast("Error Aktivasi Notif");
+        });
       });
+      
     } else {
-      showToast("Izin notifikasi ditolak oleh sistem!");
+      showToast("Izin notifikasi ditolak!");
     }
   });
 }
+
 
 // Menerima notifikasi saat website sedang dibuka
 messaging.onMessage((payload) => {
@@ -638,7 +646,7 @@ function initApp() {
 
   // Minta izin notifikasi otomatis setelah login untuk Service Worker
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('firebase-messaging-sw.js').then((reg) => {
+    navigator.serviceWorker.register('./firebase-messaging-sw.js').then((reg) => {
       console.log('Service Worker Terdaftar');
       messaging.useServiceWorker(reg);
     });
