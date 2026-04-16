@@ -477,7 +477,7 @@ function requestPushPermission() {
     if (permission === 'granted') {
       showToast("Mengaktifkan Notifikasi Chrome...");
       // GANTI STRING DI BAWAH DENGAN VAPID KEY KAMU DARI FIREBASE CONSOLE:
-      messaging.getToken({ vapidKey: 'D8kY6VyVNoz8XMz5lHqOJwy1DvLji9pKMpsDkWg37Yw' })
+      messaging.getToken({ vapidKey: 'BMhKWzZFHbErpERno5qgytnu3f-r8wDQCChtbBTsHIxTZQW26NvcMH_DYCKEuOT5whDw307SsBPEFdRr30VQXek' })
       .then((currentToken) => {
         if (currentToken) {
           console.log("Token Notif FCM:", currentToken);
