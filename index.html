@@ -145,6 +145,7 @@
     .captcha-row input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; background: var(--bg); accent-color: var(--text); }
     .captcha-row span { font-size: calc(var(--font-size) - 1px); }
 
+    /* ACCORDION LIST (Dipakai di Laporan & Gaji) */
     .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 10px; cursor: pointer; }
     .history-hd { display: flex; justify-content: space-between; align-items: center; }
     .history-date { font-weight: 700; font-size: var(--font-size); }
@@ -177,13 +178,9 @@
     .chat-btn-img { width: 42px; height: 42px; border-radius: 50%; background: var(--surface); color: var(--text); border: 1px solid var(--border); font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .2s; }
     .chat-send { width: 42px; height: 42px; border-radius: 50%; background: var(--text); color: var(--bg); border: none; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .15s; }
 
-    /* GAJI CARDS */
-    .gaji-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
-    .gaji-head { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border); padding-bottom: 8px; margin-bottom: 4px; }
-    .gaji-name { font-weight: 800; font-size: var(--font-size); color: var(--text); }
-    .gaji-tgl { font-size: calc(var(--font-size) - 3px); color: var(--text-sub); text-align: right; }
-    .gaji-row { display: flex; justify-content: space-between; font-size: calc(var(--font-size) - 1px); }
-    .gaji-row.real { font-weight: 800; color: var(--green); margin-top: 4px; border-top: 1px solid var(--border); padding-top: 8px; }
+    /* GAJI ROWS UTK INSIDE ACCORDION */
+    .gaji-row { display: flex; justify-content: space-between; font-size: calc(var(--font-size) - 1px); margin-bottom: 6px; }
+    .gaji-row.real { font-weight: 800; color: var(--green); margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
 
     .settings-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 12px; }
     .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); }
@@ -244,7 +241,7 @@
     <div class="login-err" id="loginErr">Username atau password salah.</div>
     <div class="login-hint">
       Kontak admin untuk akses akun<br><br>
-      <span style="font-family: var(--mono); opacity: 0.5;">App Version: v7.0.0 (Gaji Auto Update)</span>
+      <span style="font-family: var(--mono); opacity: 0.5;">App Version: v7.1.0 (Gaji Accordion)</span>
     </div>
   </div>
 </div>
@@ -330,7 +327,7 @@
       </div>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.0.0 (Gaji Auto Update)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.1.0 (Gaji Accordion)</span>
       </div>
     </div>
 
@@ -358,7 +355,7 @@
       <div id="historyList"><div style="text-align:center;padding:20px;color:gray">Memuat...</div></div>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.0.0 (Gaji Auto Update)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.1.0 (Gaji Accordion)</span>
       </div>
     </div>
 
@@ -368,7 +365,7 @@
       <div id="gajiList"><div style="text-align:center;padding:20px;color:gray">Memuat Data Gaji...</div></div>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.0.0 (Gaji Auto Update)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.1.0 (Gaji Accordion)</span>
       </div>
     </div>
 
@@ -406,7 +403,7 @@
       <button class="btn-d" onclick="openModal('logoutModal')">Keluar Akun</button>
       <div class="footer">
         BY | @ManDev Official<br>
-        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.0.0 (Gaji Auto Update)</span>
+        <span style="font-family: var(--mono); font-size: 9px; opacity: 0.5; display: block; margin-top: 4px;">App Version: v7.1.0 (Gaji Accordion)</span>
       </div>
     </div>
 
@@ -819,7 +816,7 @@ function listenChats() {
 }
 
 // ==========================================
-// 7. LISTEN DATA GAJI
+// 7. LISTEN DATA GAJI (MODEL ACCORDION)
 // ==========================================
 function listenGaji() {
   db_firestore.collection("gaji").orderBy("timestamp", "desc").onSnapshot(snap => {
@@ -829,15 +826,34 @@ function listenGaji() {
     let html = '';
     snap.forEach(doc => {
       let g = doc.data();
+      
+      // Tombol Hapus khusus Owner (Biar bisa bersihin per bulan)
+      const actionBtns = currentUser.role === 'owner' ? `
+        <button class="del-btn" onclick="event.stopPropagation(); db_firestore.collection('gaji').doc('${g.id}').delete(); showToast('Data gaji dihapus ✓');">Hapus</button>
+      ` : '';
+
+      // Tampilan Accordion mirip Database Laporan
       html += `
-        <div class="gaji-card">
-          <div class="gaji-head">
-             <div class="gaji-name">${g.nama}</div>
-             <div class="gaji-tgl">${g.tglStr}<br>Absen: ${g.jamStr}</div>
+        <div class="history-item" onclick="document.getElementById('gj_${g.id}').style.display = document.getElementById('gj_${g.id}').style.display === 'block' ? 'none' : 'block'">
+          <div class="history-hd">
+            <div>
+              <div class="history-date">${g.nama}</div>
+              <div class="history-meta">${g.tglStr}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:12px; font-weight:700; color:var(--green)">Rp ${fmt(g.gajiReal)}</span>
+              ${actionBtns}
+            </div>
           </div>
-          <div class="gaji-row"><span>Gaji Pokok:</span><span>Rp ${fmt(g.gajiPokok)}</span></div>
-          <div class="gaji-row"><span style="color:var(--red)">Kasbon/Ambil:</span><span style="color:var(--red)">- Rp ${fmt(g.kasbon)}</span></div>
-          <div class="gaji-row real"><span>Gaji Real:</span><span>Rp ${fmt(g.gajiReal)}</span></div>
+          
+          <div class="history-body" id="gj_${g.id}" style="font-family: var(--font-family);">
+            <div class="gaji-row"><span>Gaji Pokok:</span><span>Rp ${fmt(g.gajiPokok)}</span></div>
+            <div class="gaji-row"><span style="color:var(--red)">Potongan/Kasbon:</span><span style="color:var(--red)">- Rp ${fmt(g.kasbon)}</span></div>
+            <div class="gaji-row real"><span>Gaji Real:</span><span>Rp ${fmt(g.gajiReal)}</span></div>
+            <div style="font-size:10px; color:var(--text-dim); margin-top:10px; border-top:1px dashed var(--border); padding-top:6px; text-align:right;">
+              Waktu Absen: ${g.jamStr}
+            </div>
+          </div>
         </div>
       `;
     });
