@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "ec1a3206-23bc-41ae-8cd3-f44002419a99",
+    });
+  });
+</script>
   <link rel="manifest" href="https://progressier.app/imj2AS3jOOXTAzcCJ5PV/progressier.json"/>
 <script defer src="https://progressier.app/imj2AS3jOOXTAzcCJ5PV/script.js"></script>
   <meta charset="UTF-8">
